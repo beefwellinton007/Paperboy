@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paperboy — ROI & Path-to-$20K Calculators</title>
+<style>
+  :root{--bg:#0f1419;--card:#1a212b;--ink:#e8eef5;--mut:#8b9bb0;--accent:#3ea66b;--accent2:#4a9eff;--line:#2a3542;--warn:#e0a13e}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--mut);margin:0 0 28px;font-size:14px}
+  .tabs{display:flex;gap:8px;margin-bottom:24px}
+  .tab{flex:1;padding:12px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:10px;cursor:pointer;font-weight:600;font-size:14px;color:var(--mut)}
+  .tab.active{color:var(--ink);border-color:var(--accent);background:#16241c}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:18px}
+  .card h2{margin:0 0 16px;font-size:16px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}
+  .row label{font-size:14px;color:var(--ink);flex:1}
+  .row .hint{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+  input[type=number]{width:120px;padding:9px 11px;background:#0d1218;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:14px;text-align:right}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .out{background:#0d1218;border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:8px}
+  .big{font-size:30px;font-weight:700;color:var(--accent)}
+  .big.blue{color:var(--accent2)}
+  .out .lbl{color:var(--mut);font-size:13px;margin-bottom:2px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600}
+  .pill.good{background:#16301f;color:var(--accent)}
+  .pill.warn{background:#332813;color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--mut);font-weight:600}
+  .note{color:var(--mut);font-size:12px;margin-top:14px}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Paperboy Calculators</h1>
+  <p class="sub">Two tools. <b>Client ROI</b> — run it live on a fit call to size the audit's value. <b>Path to $20K</b> — model your ramp. Everything runs locally in your browser; nothing is sent anywhere.</p>
+
+  <div class="tabs">
+    <div class="tab active" id="t1" onclick="show(1)">💰 Client ROI Calculator</div>
+    <div class="tab" id="t2" onclick="show(2)">🎯 Path to $20K/Month</div>
+  </div>
+
+  <!-- ============ ROI CALC ============ -->
+  <div id="panel1">
+    <div class="card">
+      <h2>Estimate a prospect's annual savings (justifies the audit fee)</h2>
+      <p class="sub" style="margin-top:-6px">Plug in numbers from your discovery call. This is the "3× or free" math, live.</p>
+
+      <div class="row"><label>Invoices processed / month<span class="hint">AP volume keyed into NetSuite</span></label><input type="number" id="invQty" value="600"></div>
+      <div class="row"><label>Minutes per invoice (manual)<span class="hint">entry + matching + chasing</span></label><input type="number" id="invMin" value="6"></div>
+      <div class="row"><label>Hours / month on reconciliations<span class="hint">bank, sub-ledger, intercompany</span></label><input type="number" id="reconHrs" value="40"></div>
+      <div class="row"><label>Hours / month building reports<span class="hint">manual report + commentary work</span></label><input type="number" id="reportHrs" value="30"></div>
+      <div class="row"><label>Hours / month fixing integration breaks<span class="hint">NetSuite ↔ CRM/3PL/bank exceptions</span></label><input type="number" id="intHrs" value="15"></div>
+      <div class="row"><label>Fully-loaded labor rate ($/hr)<span class="hint">salary + benefits + overhead</span></label><input type="number" id="rate" value="45"></div>
+      <div class="row"><label>Realistic automation capture (%)<span class="hint">share of this work AI removes</span></label><input type="number" id="capture" value="70"></div>
+      <div class="row"><label>Your audit fee ($)<span class="hint">to check the 3× guarantee</span></label><input type="number" id="fee" value="6000"></div>
+
+      <div class="out">
+        <div class="grid2">
+          <div><div class="lbl">Identified annual savings</div><div class="big" id="annual">$0</div></div>
+          <div><div class="lbl">Monthly manual cost today</div><div class="big blue" id="monthly">$0</div></div>
+        </div>
+        <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+        <div class="grid2">
+          <div><div class="lbl">Guarantee check (savings ÷ fee)</div><div style="font-size:22px;font-weight:700" id="multiple">0×</div></div>
+          <div><div class="lbl">Audit payback</div><div style="font-size:22px;font-weight:700" id="payback">—</div></div>
+        </div>
+        <div style="margin-top:12px" id="verdict"></div>
+      </div>
+      <p class="note">Conservative by design — only counts 4 process areas. Real audits usually surface 5–10. Use the lower bound on calls; it's more credible and still clears 3× easily.</p>
+    </div>
+  </div>
+
+  <!-- ============ PATH CALC ============ -->
+  <div id="panel2" class="hidden">
+    <div class="card">
+      <h2>Model your path to $20,000/month</h2>
+      <p class="sub" style="margin-top:-6px">Adjust the mix. The goal line is recurring retainer revenue.</p>
+
+      <div class="row"><label>Active retainers</label><input type="number" id="pRet" value="3"></div>
+      <div class="row"><label>Avg retainer price ($/mo)</label><input type="number" id="pRetP" value="6500"></div>
+      <div class="row"><label>Audits / month</label><input type="number" id="pAud" value="0"></div>
+      <div class="row"><label>Avg audit price ($)</label><input type="number" id="pAudP" value="6000"></div>
+      <div class="row"><label>Builds / month (amortized)</label><input type="number" id="pBld" value="0"></div>
+      <div class="row"><label>Avg build price ($)</label><input type="number" id="pBldP" value="12000"></div>
+      <div class="row"><label>Bridge subcontract ($/mo)</label><input type="number" id="pBr" value="0"></div>
+
+      <div class="out">
+        <div class="lbl">Projected monthly revenue</div>
+        <div class="big" id="pTotal">$0</div>
+        <div style="margin-top:8px" id="pVerdict"></div>
+        <div style="margin-top:10px;color:var(--mut);font-size:13px" id="pRecurring"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Reference ramp (conservative)</h2>
+      <table>
+        <thead><tr><th>Month</th><th>Retainers</th><th>Audits</th><th>Builds</th><th>Revenue</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>$9.5K</td></tr>
+          <tr><td>2</td><td>1</td><td>2</td><td>0</td><td>$21.5K</td></tr>
+          <tr><td>3</td><td>1</td><td>2</td><td>1</td><td>$30.5K</td></tr>
+          <tr><td>4</td><td>2</td><td>1</td><td>0</td><td>$20K</td></tr>
+          <tr><td>5</td><td>2</td><td>1</td><td>1</td><td>$31K</td></tr>
+          <tr><td><b>6</b></td><td><b>3</b></td><td>1</td><td>0</td><td><b>$25.5K</b></td></tr>
+        </tbody>
+      </table>
+      <p class="note">The number that matters is the Retainers column climbing 0→1→1→2→2→3. At 3 retainers you've hit a $20K recurring base. Builds/audits are lumpy add-ons on top.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function money(n){return '$'+Math.round(n).toLocaleString()}
+  function show(n){
+    document.getElementById('panel1').classList.toggle('hidden',n!==1);
+    document.getElementById('panel2').classList.toggle('hidden',n!==2);
+    document.getElementById('t1').classList.toggle('active',n===1);
+    document.getElementById('t2').classList.toggle('active',n===2);
+  }
+  const g=id=>parseFloat(document.getElementById(id).value)||0;
+  function roi(){
+    const apHrs=(g('invQty')*g('invMin'))/60;
+    const totalHrs=apHrs+g('reconHrs')+g('reportHrs')+g('intHrs');     // per month
+    const monthlyCost=totalHrs*g('rate');
+    const annual=monthlyCost*12*(g('capture')/100);
+    const fee=g('fee');
+    const mult=fee>0?annual/fee:0;
+    const paybackMo=annual>0?(fee/(annual/12)):0;
+    document.getElementById('annual').textContent=money(annual);
+    document.getElementById('monthly').textContent=money(monthlyCost);
+    document.getElementById('multiple').textContent=mult.toFixed(1)+'×';
+    document.getElementById('payback').textContent=paybackMo>0?paybackMo.toFixed(1)+' mo':'—';
+    const v=document.getElementById('verdict');
+    if(mult>=3) v.innerHTML='<span class="pill good">✓ Clears the 3×-or-free guarantee — easy yes</span>';
+    else if(mult>0) v.innerHTML='<span class="pill warn">Below 3× on these inputs — add more process areas or revisit volumes</span>';
+    else v.innerHTML='';
+  }
+  function path(){
+    const total=g('pRet')*g('pRetP')+g('pAud')*g('pAudP')+g('pBld')*g('pBldP')+g('pBr');
+    const recurring=g('pRet')*g('pRetP');
+    document.getElementById('pTotal').textContent=money(total);
+    const v=document.getElementById('pVerdict');
+    if(total>=20000) v.innerHTML='<span class="pill good">🎯 At or above $20K/month</span>';
+    else v.innerHTML='<span class="pill warn">'+money(20000-total)+' to go</span>';
+    document.getElementById('pRecurring').textContent='Recurring (retainers only): '+money(recurring)+(recurring>=20000?'  ✓ durable':'  — the durable core; aim to get this line alone to $20K');
+  }
+  document.querySelectorAll('#panel1 input').forEach(i=>i.addEventListener('input',roi));
+  document.querySelectorAll('#panel2 input').forEach(i=>i.addEventListener('input',path));
+  roi();path();
+</script>
+</body>
+</html>
