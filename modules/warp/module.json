@@ -1,0 +1,25 @@
+{
+  "id": "warp",
+  "name": "Warp (Hyperspace)",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Fly through a 3D starfield; stars streak with speed and surge into hyperspace bursts. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "star_count",
+      "label": "Number of stars",
+      "type": "int",
+      "min": 100,
+      "max": 2000,
+      "default": 400
+    },
+    {
+      "key": "hyperspace",
+      "label": "Hyperspace surges",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}

@@ -50,6 +50,8 @@ add_library(ad_modules STATIC
   modules/starry_night/starry_night.cpp
   modules/fish/fish.cpp
   modules/mowing_man/mowing_man.cpp
+  modules/warp/warp.cpp
+  modules/spotlight/spotlight.cpp
   modules/_template/template.cpp
 )
 target_include_directories(ad_modules PUBLIC ${CMAKE_SOURCE_DIR}/modules)

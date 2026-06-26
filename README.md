@@ -25,6 +25,8 @@ modules/
   starry_night/     flagship recreation (skyline + stars)
   fish/             flagship recreation (flocking aquarium)
   mowing_man/       flagship recreation (mows the lawn)
+  warp/             recreation (hyperspace starfield)
+  spotlight/        recreation (roving beam reveal)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester

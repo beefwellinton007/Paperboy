@@ -57,6 +57,11 @@ renamed to the version, dated, tagged, and published.
   forth, clearing tall grass into striped mowed rows, then the lawn regrows and
   he restarts. Establishes the persistent-field pattern (module-owned mowed grid
   redrawn from state, coalesced into runs; no offscreen buffer needed).
+- **Warp (Hyperspace)** module — recreation: a 3D starfield with motion-blur
+  streaks that lengthen with speed and surge into hyperspace bursts.
+- **Spotlight** module — recreation: a roving spotlight on a Lissajous path
+  reveals a hidden scene (a tiled floor + an "AFTER DARK" sign) only where the
+  beam falls, via a per-scanline shadow mask.
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.

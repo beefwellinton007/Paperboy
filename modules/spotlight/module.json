@@ -1,0 +1,18 @@
+{
+  "id": "spotlight",
+  "name": "Spotlight",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "A roving spotlight sweeps a dark screen, revealing a hidden scene only where the beam falls. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "beam_size",
+      "label": "Beam size",
+      "type": "enum",
+      "options": ["small", "normal", "large"],
+      "default": "normal"
+    }
+  ]
+}
