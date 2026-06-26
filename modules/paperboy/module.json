@@ -1,0 +1,32 @@
+{
+  "id": "paperboy",
+  "name": "Paperboy",
+  "version": "1.0.0",
+  "category": "interactive",
+  "author": "After Dark Recreation Project",
+  "description": "Side-scrolling paperboy delivers papers and dodges obstacles. Ambient by default; playable in demo mode. The debut 'game screensaver' module.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "scroll_speed",
+      "label": "Ride speed",
+      "type": "enum",
+      "options": ["slow", "normal", "fast"],
+      "default": "normal"
+    },
+    {
+      "key": "day_length",
+      "label": "Day cycle (seconds)",
+      "type": "int",
+      "min": 10,
+      "max": 300,
+      "default": 40
+    },
+    {
+      "key": "show_score",
+      "label": "Show delivery score",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}

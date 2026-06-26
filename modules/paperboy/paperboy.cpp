@@ -1,0 +1,287 @@
+// Paperboy — the special first-release demo module.
+//
+// A side-scrolling street: the paperboy rides along (camera scrolls the world
+// past a fixed rider), tossing papers onto undelivered houses and dodging the
+// occasional obstacle. Runs fully autonomously as ambient eye candy; in
+// interactive mode (harness --play) the player steers and throws.
+//
+// Deliberately a *demo* of the new "playable module" category — one street,
+// paper tossing, dodging, score, and a day->dusk->night palette cycle. It
+// exercises the Core systems (scrolling, sprites-as-rects, input, HUD) that
+// future interactive modules will reuse.
+#include "paperboy.h"
+
+#include <algorithm>
+#include <cmath>
+#include <vector>
+
+namespace ad {
+namespace {
+
+struct House {
+  double world_x;   // position along the street
+  int width;
+  int height;
+  bool delivered = false;
+};
+
+struct Paper {
+  double x, y, vx, vy;
+  bool active = false;
+};
+
+struct Obstacle {
+  double world_x;
+  int width = 26;
+  int height = 34;
+};
+
+Color sky_color(double phase) {
+  const Color day{135, 206, 235}, dusk{250, 140, 80}, night{18, 18, 56};
+  if (phase < 0.34) return lerp(day, dusk, phase / 0.34);
+  if (phase < 0.67) return lerp(dusk, night, (phase - 0.34) / 0.33);
+  return lerp(night, day, (phase - 0.67) / 0.33);
+}
+
+class Paperboy : public Module {
+ public:
+  ModuleInfo info() const override {
+    return {"paperboy", "Paperboy", "1.0.0", Category::Interactive};
+  }
+
+  void init(Context& ctx) override {
+    w_ = ctx.screen_w;
+    h_ = ctx.screen_h;
+    street_top_ = h_ * 0.62;
+    street_bot_ = h_ * 0.92;
+    rider_x_ = w_ * 0.18;
+    rider_y_ = (street_top_ + street_bot_) * 0.5;
+    target_y_ = rider_y_;
+    camera_x_ = 0;
+    score_ = 0;
+    throw_timer_ = 0;
+    houses_.clear();
+    papers_.clear();
+    obstacles_.clear();
+    // Seed the street ahead of the rider.
+    double x = w_ * 0.5;
+    for (int i = 0; i < 12; ++i) {
+      spawn_house(ctx, x);
+      x += ctx.rng.range(220, 360);
+    }
+    next_obstacle_x_ = camera_x_ + ctx.rng.range(400, 900);
+  }
+
+  void tick(Context& ctx, double dt) override {
+    c_time_ += dt;  // drives the day/dusk/night palette cycle in draw()
+    const double scroll = 150.0;  // px/s the world moves past the rider
+    camera_x_ += scroll * dt;
+
+    // Keep the street populated ahead and recycle what scrolls off-screen.
+    double rightmost = 0;
+    for (const auto& hsh : houses_)
+      rightmost = std::max(rightmost, hsh.world_x + hsh.width);
+    while (rightmost - camera_x_ < w_ + 200) {
+      double nx = rightmost + ctx.rng.range(220, 360);
+      spawn_house(ctx, nx);
+      rightmost = nx + houses_.back().width;
+    }
+    houses_.erase(std::remove_if(houses_.begin(), houses_.end(),
+                                 [&](const House& hsh) {
+                                   return hsh.world_x + hsh.width - camera_x_ < -50;
+                                 }),
+                  houses_.end());
+
+    // Obstacles on the street.
+    if (camera_x_ > next_obstacle_x_) {
+      obstacles_.push_back({camera_x_ + w_ + 40});
+      next_obstacle_x_ = camera_x_ + ctx.rng.range(500, 1100);
+    }
+    obstacles_.erase(std::remove_if(obstacles_.begin(), obstacles_.end(),
+                                    [&](const Obstacle& o) {
+                                      return o.world_x - camera_x_ < -60;
+                                    }),
+                     obstacles_.end());
+
+    if (!ctx.interactive) ai_drive(ctx, dt);
+
+    // Smoothly move toward the target lane (player- or AI-chosen).
+    rider_y_ += (target_y_ - rider_y_) * std::min(1.0, dt * 8.0);
+    rider_y_ = std::clamp(rider_y_, street_top_, street_bot_);
+
+    // Advance papers (projectile arc) and resolve deliveries.
+    const double gravity = 900.0;
+    for (auto& p : papers_) {
+      if (!p.active) continue;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += gravity * dt;
+      if (p.y > street_top_ + 4 || p.x - camera_x_ > w_ + 40 || p.x < camera_x_ - 40)
+        p.active = false;
+      else
+        try_deliver(p);
+    }
+    papers_.erase(std::remove_if(papers_.begin(), papers_.end(),
+                                 [](const Paper& p) { return !p.active; }),
+                  papers_.end());
+  }
+
+  bool on_event(Context& ctx, const Event& e) override {
+    if (!ctx.interactive) return false;  // ambient mode: let host dismiss
+    if (e.type == EventType::KeyDown) {
+      if (e.key == Key::Up) target_y_ = street_top_;
+      else if (e.key == Key::Down) target_y_ = street_bot_;
+      else if (e.key == Key::Space) throw_paper();
+      else return false;
+      return true;
+    }
+    return false;
+  }
+
+  void draw(Canvas& c) override {
+    const double day = std::fmod(c_time_, kDayLen) / kDayLen;
+    c.clear(sky_color(day));
+
+    // Sun/moon arcs across the sky with the day cycle.
+    int sun = static_cast<int>(w_ * (0.1 + 0.8 * day));
+    int sun_y = static_cast<int>(h_ * 0.12 + std::sin(day * 3.14159) * -h_ * 0.05);
+    Color orb = day < 0.6 ? Color{255, 245, 200} : Color{230, 230, 245};
+    c.fill_rect(sun - 18, sun_y - 18, 36, 36, orb);
+
+    // Ground / street.
+    c.fill_rect(0, static_cast<int>(street_top_), w_,
+                h_ - static_cast<int>(street_top_), Color{70, 70, 80});
+    c.fill_rect(0, static_cast<int>(street_top_), w_, 4, Color{120, 120, 130});
+
+    // Houses (lawn + body + roof + door). Delivered ones light a window.
+    for (const auto& hsh : houses_) {
+      int hx = static_cast<int>(hsh.world_x - camera_x_);
+      if (hx > w_ || hx + hsh.width < 0) continue;
+      int base = static_cast<int>(street_top_);
+      int top = base - hsh.height;
+      c.fill_rect(hx, base - 6, hsh.width, 6, Color{60, 130, 60});      // lawn
+      c.fill_rect(hx, top, hsh.width, hsh.height, Color{180, 150, 120});  // body
+      c.fill_rect(hx - 6, top, hsh.width + 12, 12, Color{140, 60, 50});   // roof
+      c.fill_rect(hx + hsh.width / 2 - 7, base - 26, 14, 26, Color{90, 60, 40});  // door
+      Color win = hsh.delivered ? Color{255, 220, 120} : Color{120, 150, 170};
+      c.fill_rect(hx + 8, top + 16, 14, 14, win);
+    }
+
+    // Obstacles (trash cans).
+    for (const auto& o : obstacles_) {
+      int ox = static_cast<int>(o.world_x - camera_x_);
+      c.fill_rect(ox, static_cast<int>(street_top_) - o.height, o.width,
+                  o.height, Color{40, 90, 110});
+    }
+
+    // Papers in flight.
+    for (const auto& p : papers_) {
+      if (!p.active) continue;
+      c.fill_rect(static_cast<int>(p.x - camera_x_), static_cast<int>(p.y), 8, 6,
+                  Color{245, 245, 235});
+    }
+
+    // The paperboy: two wheels, a frame, a body, a head.
+    int rx = static_cast<int>(rider_x_);
+    int ry = static_cast<int>(rider_y_);
+    c.fill_rect(rx - 14, ry + 6, 12, 12, Color{20, 20, 20});  // back wheel
+    c.fill_rect(rx + 8, ry + 6, 12, 12, Color{20, 20, 20});   // front wheel
+    c.fill_rect(rx - 8, ry + 2, 20, 4, Color{180, 30, 30});   // frame
+    c.fill_rect(rx - 4, ry - 12, 10, 14, Color{40, 90, 200}); // body
+    c.fill_rect(rx - 2, ry - 22, 10, 10, Color{235, 200, 160});// head
+
+    // Score HUD as a tally bar (text rendering is a Phase-1 TODO).
+    int ticks = std::min(score_, 40);
+    for (int i = 0; i < ticks; ++i)
+      c.fill_rect(12 + i * 6, 12, 4, 12, Color{255, 215, 0});
+  }
+
+ private:
+  void spawn_house(Context& ctx, double world_x) {
+    House hsh;
+    hsh.world_x = world_x;
+    hsh.width = ctx.rng.range(70, 110);
+    hsh.height = ctx.rng.range(70, 120);
+    houses_.push_back(hsh);
+  }
+
+  void throw_paper() {
+    Paper p;
+    p.x = rider_x_ + camera_x_;
+    p.y = rider_y_ - 16;
+    p.vx = 260;
+    p.vy = -260;
+    p.active = true;
+    papers_.push_back(p);
+  }
+
+  void try_deliver(Paper& p) {
+    for (auto& hsh : houses_) {
+      if (hsh.delivered) continue;
+      double left = hsh.world_x, right = hsh.world_x + hsh.width;
+      if (p.x >= left && p.x <= right && p.y >= street_top_ - hsh.height &&
+          p.y <= street_top_) {
+        hsh.delivered = true;
+        ++score_;
+        p.active = false;
+        return;
+      }
+    }
+  }
+
+  void ai_drive(Context& ctx, double dt) {
+    // Dodge: if an obstacle is close ahead, hop to the far lane.
+    for (const auto& o : obstacles_) {
+      double sx = o.world_x - camera_x_;
+      if (sx > rider_x_ - 20 && sx < rider_x_ + 120) {
+        target_y_ = street_top_;  // hop up over the trash can
+      }
+    }
+    if (obstacles_.empty() || target_y_ == street_top_) {
+      // Drift back toward delivering lane when clear.
+      bool clear = true;
+      for (const auto& o : obstacles_) {
+        double sx = o.world_x - camera_x_;
+        if (sx > rider_x_ - 20 && sx < rider_x_ + 120) clear = false;
+      }
+      if (clear) target_y_ = (street_top_ + street_bot_) * 0.55;
+    }
+
+    // Aim: throw at the nearest undelivered house just ahead of the rider.
+    throw_timer_ -= dt;
+    if (throw_timer_ <= 0) {
+      for (const auto& hsh : houses_) {
+        double sx = hsh.world_x - camera_x_;
+        if (!hsh.delivered && sx > rider_x_ + 30 && sx < rider_x_ + 220) {
+          throw_paper();
+          throw_timer_ = ctx.rng.next_double() * 0.4 + 0.5;
+          break;
+        }
+      }
+    }
+  }
+
+  static constexpr double kDayLen = 40.0;  // seconds per full day cycle
+
+  // Local clock for the palette cycle (draw() has no Context; tick advances it).
+  double c_time_ = 0;
+
+  int w_ = 0, h_ = 0;
+  double street_top_ = 0, street_bot_ = 0;
+  double rider_x_ = 0, rider_y_ = 0, target_y_ = 0;
+  double camera_x_ = 0;
+  double throw_timer_ = 0;
+  double next_obstacle_x_ = 0;
+  int score_ = 0;
+  std::vector<House> houses_;
+  std::vector<Paper> papers_;
+  std::vector<Obstacle> obstacles_;
+};
+
+}  // namespace
+
+std::unique_ptr<Module> make_paperboy() {
+  return std::make_unique<Paperboy>();
+}
+
+}  // namespace ad

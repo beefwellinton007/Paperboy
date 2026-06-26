@@ -21,6 +21,23 @@ renamed to the version, dated, tagged, and published.
 - Engine stack: **portable backend** (one shared C++/Rust engine over
   SDL2/sokol with native host shims per OS).
 
+### Added (Phase 0 scaffold — in progress)
+- **Module SDK** (`sdk/include/afterdark/afterdark.h`): Canvas, Event, Rng,
+  Context, and the `Module` interface every screensaver implements.
+- `module.json` manifest schema (`sdk/schema/module.schema.json`) — drives the
+  catalog and per-platform config UI.
+- **AfterDark Core**: module `Registry` + Render/Platform Abstraction Layer with
+  a headless backend (CI/no-display) and an SDL2 backend (windowed).
+- **Paperboy** module — the special first-release demo: side-scrolling delivery,
+  paper-toss physics, obstacle dodging, day→dusk→night palette cycle, score HUD;
+  autonomous ambient mode + interactive `--play` mode.
+- `_template` module (a working Warp-style starfield) as the copy-me starting
+  point for new modules.
+- **Dev harness** (`ad-harness`): load any module instantly; `--headless`
+  doubles as the per-module CI smoke test.
+- Native host stubs for Windows `.scr` and macOS `.saver`.
+- CMake build and GitHub Actions CI (build + headless smoke on Linux/macOS/Windows).
+
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
 - **Module SDK** and `module.json` manifest format (room to add more modules).

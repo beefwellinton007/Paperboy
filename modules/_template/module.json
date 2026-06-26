@@ -1,0 +1,19 @@
+{
+  "id": "starfield",
+  "name": "Starfield (template)",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Warp-style starfield. Also the copy-me template for new modules.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "star_count",
+      "label": "Number of stars",
+      "type": "int",
+      "min": 50,
+      "max": 1000,
+      "default": 200
+    }
+  ]
+}

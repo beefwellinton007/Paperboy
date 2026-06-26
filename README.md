@@ -13,19 +13,41 @@ game screensaver — a demo of playable/idle "game" modules.
 
 > Status: **pre-2.0, in development.** Nothing has shipped yet.
 
-## Repository layout (planned)
+## Repository layout
 
 ```
-core/        AfterDark Core engine + Render/Platform Abstraction Layer
-hosts/
-  windows/   .scr host shim
-  macos/     .saver host shim
-  harness/   standalone dev runner (fast module iteration)
+sdk/         Module SDK (afterdark.h interface) + module.json schema
+core/        AfterDark Core: module registry + Render/Platform Abstraction Layer
+               (SDL2 backend when available, headless backend always)
 modules/
   paperboy/  special first-release game-screensaver demo
-  ...        flagship + classic recreations
-sdk/         Module SDK headers, manifest schema, docs
+  _template/ copy-me template (also a working starfield)
+hosts/
+  harness/   standalone dev runner + headless CI smoke tester
+  windows/   .scr host shim (stub; builds on a Windows runner)
+  macos/     .saver host shim (stub; builds on a macOS runner)
 ```
+
+## Build & run
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+
+build/ad-harness --list                       # list modules
+build/ad-harness --module paperboy            # run it (SDL2 window if installed)
+build/ad-harness --module paperboy --play     # interactive demo mode
+build/ad-harness --module paperboy --headless --frames 300   # CI smoke test
+```
+
+Without SDL2 installed the harness uses the headless backend (no window) — used
+by CI to verify every module renders without crashing. Install SDL2
+(`libsdl2-dev` / `brew install sdl2`) to get a real window.
+
+### Add a new module
+1. `cp -r modules/_template modules/<your-id>`
+2. Edit `ModuleInfo` + `module.json` (id/name/category) and your `init/tick/draw`.
+3. Register it in `modules/modules.cpp` and add its source to `CMakeLists.txt`.
 
 All artwork and code are original recreations — no Berkeley Systems assets are
 used (see PLAN.md §7).
