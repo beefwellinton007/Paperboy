@@ -49,6 +49,7 @@ add_library(ad_modules STATIC
   modules/flying_toasters/flying_toasters.cpp
   modules/starry_night/starry_night.cpp
   modules/fish/fish.cpp
+  modules/mowing_man/mowing_man.cpp
   modules/_template/template.cpp
 )
 target_include_directories(ad_modules PUBLIC ${CMAKE_SOURCE_DIR}/modules)

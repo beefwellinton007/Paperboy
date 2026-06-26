@@ -1,0 +1,26 @@
+{
+  "id": "mowing-man",
+  "name": "Mowing Man",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "A little guy mows the lawn into striped rows, then it regrows and he starts again. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "mow_speed",
+      "label": "Mowing speed",
+      "type": "enum",
+      "options": ["slow", "normal", "fast"],
+      "default": "normal"
+    },
+    {
+      "key": "regrow_delay",
+      "label": "Regrow delay (seconds)",
+      "type": "int",
+      "min": 0,
+      "max": 30,
+      "default": 4
+    }
+  ]
+}

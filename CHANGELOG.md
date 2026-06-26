@@ -53,6 +53,10 @@ renamed to the version, dated, tagged, and published.
 - **Fish! (Aquatic Realm)** module — flagship recreation: a school of fish
   flocking via the steering helper, rising bubbles, swaying seaweed, sandy
   bottom. First consumer of the shared steering helper (original art).
+- **Mowing Man** module — flagship recreation: a man pushes a mower back and
+  forth, clearing tall grass into striped mowed rows, then the lawn regrows and
+  he restarts. Establishes the persistent-field pattern (module-owned mowed grid
+  redrawn from state, coalesced into runs; no offscreen buffer needed).
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
