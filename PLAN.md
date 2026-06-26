@@ -72,12 +72,12 @@ layer, with **native host shims** per OS:
   — this is where 95% of module development happens (no need to install a
   screensaver to iterate).
 
-> **Decision point (needs sign-off before Phase 0):** native-per-OS renderer vs.
-> one portable backend (SDL2/sokol). Recommendation: **portable backend** for
-> speed of building the whole catalog; revisit only if a module needs OS-specific
-> tricks. A second option on the table is a web-tech engine (Canvas/WebGL inside
-> a native host) — easiest module authoring, heaviest host. Flagged for the
-> kickoff discussion.
+> **Decision (locked):** **portable backend** — one shared engine over
+> SDL2/sokol with native host shims per OS — chosen for speed of building the
+> whole catalog. We revisit only if a specific module needs OS-specific tricks.
+> Alternatives considered and set aside: fully native per-OS renderer (D3D11 +
+> Metal — ~2x rendering work) and a web-tech engine (Canvas/WebGL in an embedded
+> webview — easiest authoring but heaviest host).
 
 ### 2.3 Module SDK & manifest
 

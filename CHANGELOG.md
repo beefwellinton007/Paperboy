@@ -17,6 +17,10 @@ renamed to the version, dated, tagged, and published.
   roadmap, and the production-ready gate.
 - This changelog.
 
+### Decided
+- Engine stack: **portable backend** (one shared C++/Rust engine over
+  SDL2/sokol with native host shims per OS).
+
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
 - **Module SDK** and `module.json` manifest format (room to add more modules).
