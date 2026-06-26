@@ -23,6 +23,7 @@ modules/
   paperboy/         special first-release game-screensaver demo
   flying_toasters/  flagship recreation (winged toasters)
   starry_night/     flagship recreation (skyline + stars)
+  fish/             flagship recreation (flocking aquarium)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester

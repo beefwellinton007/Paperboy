@@ -47,6 +47,12 @@ renamed to the version, dated, tagged, and published.
 - **Starry Night** module — flagship recreation: gradient night sky, twinkling
   stars, shooting stars, and a city skyline with flickering lit windows.
   Establishes the layered/parallax drawing pattern (original art).
+- **Boid steering helper** (`sdk/include/afterdark/steering.h`): reusable Vec2
+  math + Reynolds flocking (separation/alignment/cohesion) for autonomous-agent
+  modules.
+- **Fish! (Aquatic Realm)** module — flagship recreation: a school of fish
+  flocking via the steering helper, rising bubbles, swaying seaweed, sandy
+  bottom. First consumer of the shared steering helper (original art).
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
