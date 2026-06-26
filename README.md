@@ -21,7 +21,8 @@ core/        AfterDark Core: module registry + Render/Platform Abstraction Layer
                (SDL2 backend when available, headless backend always)
 modules/
   paperboy/         special first-release game-screensaver demo
-  flying_toasters/  first flagship recreation (winged toasters)
+  flying_toasters/  flagship recreation (winged toasters)
+  starry_night/     flagship recreation (skyline + stars)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester

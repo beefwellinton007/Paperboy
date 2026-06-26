@@ -44,6 +44,9 @@ renamed to the version, dated, tagged, and published.
   toast drift diagonally across a night sky, each flyer with its own wing-flap
   phase. Establishes the per-entity sprite-animation pattern for the catalog
   (original art — no Berkeley Systems assets).
+- **Starry Night** module — flagship recreation: gradient night sky, twinkling
+  stars, shooting stars, and a city skyline with flickering lit windows.
+  Establishes the layered/parallax drawing pattern (original art).
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
