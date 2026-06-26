@@ -46,6 +46,7 @@ endif()
 add_library(ad_modules STATIC
   modules/modules.cpp
   modules/paperboy/paperboy.cpp
+  modules/flying_toasters/flying_toasters.cpp
   modules/_template/template.cpp
 )
 target_include_directories(ad_modules PUBLIC ${CMAKE_SOURCE_DIR}/modules)

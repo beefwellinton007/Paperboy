@@ -37,6 +37,13 @@ renamed to the version, dated, tagged, and published.
   doubles as the per-module CI smoke test.
 - Native host stubs for Windows `.scr` and macOS `.saver`.
 - CMake build and GitHub Actions CI (build + headless smoke on Linux/macOS/Windows).
+- **Text rendering** (`sdk/include/afterdark/text.h`): built-in 3x5 bitmap font
+  drawn via `fill_rect`, works on every backend with no asset files. Paperboy's
+  score HUD now shows real text (and on-screen controls in `--play` mode).
+- **Flying Toasters** module — first flagship recreation: winged toasters and
+  toast drift diagonally across a night sky, each flyer with its own wing-flap
+  phase. Establishes the per-entity sprite-animation pattern for the catalog
+  (original art — no Berkeley Systems assets).
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.

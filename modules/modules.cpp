@@ -1,6 +1,7 @@
 #include "modules.h"
 
 #include "_template/template.h"
+#include "flying_toasters/flying_toasters.h"
 #include "paperboy/paperboy.h"
 
 namespace ad {
@@ -8,12 +9,14 @@ namespace ad {
 void register_all_modules(Registry& reg) {
   // The special first-release demo.
   reg.add("paperboy", &make_paperboy);
+  // Flagship recreations (see PLAN.md §3).
+  reg.add("flying-toasters", &make_flying_toasters);
   // The copy-me template (also a working ambient starfield).
   reg.add("starfield", &make_template_starfield);
 
-  // Flagship + classic recreations land here as they're built (see PLAN.md §3):
-  //   reg.add("flying-toasters", &make_flying_toasters);
-  //   reg.add("starry-night",    &make_starry_night);
+  // More flagship + classic recreations land here as they're built:
+  //   reg.add("starry-night", &make_starry_night);
+  //   reg.add("fish",         &make_fish);
   //   ...
 }
 

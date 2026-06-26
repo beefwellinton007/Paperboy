@@ -13,7 +13,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 #include <vector>
+
+#include "afterdark/text.h"
 
 namespace ad {
 namespace {
@@ -52,6 +55,7 @@ class Paperboy : public Module {
   void init(Context& ctx) override {
     w_ = ctx.screen_w;
     h_ = ctx.screen_h;
+    ctx_interactive_ = ctx.interactive;
     street_top_ = h_ * 0.62;
     street_bot_ = h_ * 0.92;
     rider_x_ = w_ * 0.18;
@@ -190,10 +194,10 @@ class Paperboy : public Module {
     c.fill_rect(rx - 4, ry - 12, 10, 14, Color{40, 90, 200}); // body
     c.fill_rect(rx - 2, ry - 22, 10, 10, Color{235, 200, 160});// head
 
-    // Score HUD as a tally bar (text rendering is a Phase-1 TODO).
-    int ticks = std::min(score_, 40);
-    for (int i = 0; i < ticks; ++i)
-      c.fill_rect(12 + i * 6, 12, 4, 12, Color{255, 215, 0});
+    // Score HUD (real text via the built-in font).
+    draw_text(c, 14, 14, "SCORE " + std::to_string(score_), 4, Color{255, 215, 0});
+    if (ctx_interactive_)
+      draw_text(c, 14, 44, "UP/DOWN MOVE  SPACE THROW", 2, Color{230, 230, 230});
   }
 
  private:
@@ -267,6 +271,7 @@ class Paperboy : public Module {
   double c_time_ = 0;
 
   int w_ = 0, h_ = 0;
+  bool ctx_interactive_ = false;
   double street_top_ = 0, street_bot_ = 0;
   double rider_x_ = 0, rider_y_ = 0, target_y_ = 0;
   double camera_x_ = 0;
