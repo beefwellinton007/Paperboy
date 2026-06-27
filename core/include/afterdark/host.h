@@ -15,12 +15,15 @@ namespace ad {
 
 class HostSession {
  public:
-  // Does not take ownership of the module; caller keeps it alive.
-  HostSession(Module& mod, int width, int height, bool interactive)
+  // Does not take ownership of the module; caller keeps it alive. Settings are
+  // applied before init() so the module sees its config from the first frame.
+  HostSession(Module& mod, int width, int height, bool interactive,
+              const Settings& settings = {})
       : mod_(mod) {
     ctx_.screen_w = width;
     ctx_.screen_h = height;
     ctx_.interactive = interactive;
+    ctx_.settings = settings;
     mod_.init(ctx_);
   }
 

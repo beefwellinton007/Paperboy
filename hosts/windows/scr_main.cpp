@@ -55,15 +55,24 @@ Parsed parse(LPSTR cmdline) {
 // default to the debut module so the installer demonstrates Paperboy.
 std::string selected_module() { return "paperboy"; }
 
+// Per-module settings. TODO: read user choices from the registry
+// (HKCU\\Software\\AfterDark\\<module>) written by the /c config dialog. Until
+// then modules fall back to their built-in defaults.
+ad::Settings load_settings(const std::string& /*module_id*/) {
+  return ad::Settings{};
+}
+
 int run_loop(std::unique_ptr<ad::Backend> backend, bool preview) {
   ad::Registry reg;
   ad::register_all_modules(reg);
-  auto mod = reg.create(selected_module());
+  std::string id = selected_module();
+  auto mod = reg.create(id);
   if (!mod) return 1;
 
   // Sized later by the backend; start with sensible defaults.
   if (!backend->init(800, 600, "AfterDark")) return 2;
-  ad::HostSession session(*mod, 800, 600, /*interactive=*/false);
+  ad::HostSession session(*mod, 800, 600, /*interactive=*/false,
+                          load_settings(id));
 
   const double dt = 1.0 / 60.0;
   POINT origin{};

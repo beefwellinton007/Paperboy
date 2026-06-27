@@ -48,6 +48,7 @@ cmake --build build -j
 build/ad-harness --list                       # list modules
 build/ad-harness --module paperboy            # run it (SDL2 window if installed)
 build/ad-harness --module paperboy --play     # interactive demo mode
+build/ad-harness --module paperboy --set scroll_speed=fast --set day_length=10  # config
 build/ad-harness --module paperboy --headless --frames 300   # CI smoke test
 ```
 

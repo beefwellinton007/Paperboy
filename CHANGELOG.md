@@ -90,6 +90,17 @@ renamed to the version, dated, tagged, and published.
   Linux/macOS so the windowed backend and `.saver` compile there.
   (Native hosts build/verify on Windows/macOS runners, not in this Linux env.)
 
+### Configuration
+- **Settings store** (`ad::Settings` in `sdk/afterdark.h`, on `Context`): typed
+  key/value config (bool/int/float/enum/string) read by modules with fallback
+  defaults; keys match each `module.json` `settings` schema.
+- HostSession applies settings before `init()`; harness gains `--set key=value`
+  (repeatable) to drive config in dev/CI.
+- **Paperboy** now reads `scroll_speed`, `day_length`, and `show_score` from
+  settings — the first end-to-end manifest→config→behavior path.
+- Native hosts have a `load_settings()` hook wired in; reading persisted user
+  choices (Windows registry / macOS ScreenSaverDefaults) is the remaining TODO.
+
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
 - **Module SDK** and `module.json` manifest format (room to add more modules).

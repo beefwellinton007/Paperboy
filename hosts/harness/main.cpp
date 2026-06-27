@@ -29,6 +29,7 @@ struct Args {
   bool play = false;
   bool list = false;
   int frames = 120;
+  ad::Settings settings;
 };
 
 Args parse(int argc, char** argv) {
@@ -43,6 +44,12 @@ Args parse(int argc, char** argv) {
     else if (s == "--headless") a.headless = true;
     else if (s == "--play") a.play = true;
     else if (s == "--list" || s == "-l") a.list = true;
+    else if (s == "--set") {  // --set key=value (repeatable)
+      std::string kv = next();
+      auto eq = kv.find('=');
+      if (eq != std::string::npos)
+        a.settings.set(kv.substr(0, eq), kv.substr(eq + 1));
+    }
   }
   return a;
 }
@@ -74,7 +81,8 @@ int main(int argc, char** argv) {
     return 3;
   }
 
-  ad::HostSession session(*mod, args.width, args.height, args.play);
+  ad::HostSession session(*mod, args.width, args.height, args.play,
+                          args.settings);
 
   auto info = mod->info();
   std::printf("Running '%s' v%s (%s)%s\n", info.name.c_str(),

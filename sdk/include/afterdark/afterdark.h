@@ -5,9 +5,48 @@
 #pragma once
 
 #include <cstdint>
+#include <map>
 #include <string>
 
 namespace ad {
+
+// ---------------------------------------------------------------------------
+// Settings: a typed key/value store. Hosts populate it (from module.json
+// defaults + persisted user choices: Windows registry / macOS
+// ScreenSaverDefaults) before a module initializes; modules read values with a
+// fallback default. Keys match the "settings" entries in module.json.
+// ---------------------------------------------------------------------------
+class Settings {
+ public:
+  void set(const std::string& key, const std::string& value) {
+    map_[key] = value;
+  }
+  bool has(const std::string& key) const { return map_.count(key) != 0; }
+
+  std::string get(const std::string& key, const std::string& def = "") const {
+    auto it = map_.find(key);
+    return it == map_.end() ? def : it->second;
+  }
+  int get_int(const std::string& key, int def) const {
+    auto it = map_.find(key);
+    if (it == map_.end()) return def;
+    try { return std::stoi(it->second); } catch (...) { return def; }
+  }
+  double get_float(const std::string& key, double def) const {
+    auto it = map_.find(key);
+    if (it == map_.end()) return def;
+    try { return std::stod(it->second); } catch (...) { return def; }
+  }
+  bool get_bool(const std::string& key, bool def) const {
+    auto it = map_.find(key);
+    if (it == map_.end()) return def;
+    const std::string& v = it->second;
+    return v == "1" || v == "true" || v == "yes" || v == "on";
+  }
+
+ private:
+  std::map<std::string, std::string> map_;
+};
 
 // ---------------------------------------------------------------------------
 // Drawing primitives
@@ -79,6 +118,7 @@ struct Context {
   double time = 0;       // seconds since module init (host-advanced)
   bool interactive = false;  // true in playable/demo mode (harness --play)
   Rng rng;
+  Settings settings;     // module config (see Settings above)
 };
 
 // ---------------------------------------------------------------------------

@@ -74,12 +74,14 @@ class CGBackend : public ad::Backend {
     int w = (int)frame.size.width, h = (int)frame.size.height;
     ad::Registry reg;
     ad::register_all_modules(reg);
-    // TODO: read selected module from ScreenSaverDefaults; default to paperboy.
+    // TODO: read selected module + per-module settings from ScreenSaverDefaults
+    // (written by the configure sheet); default to paperboy with built-ins.
     _module = reg.create("paperboy");
+    ad::Settings settings;  // TODO: populate from ScreenSaverDefaults
     _backend = std::make_unique<CGBackend>(w, h);
     _backend->init(w, h, "AfterDark");
     _session = std::make_unique<ad::HostSession>(*_module, w, h,
-                                                 /*interactive=*/false);
+                                                 /*interactive=*/false, settings);
     [self setAnimationTimeInterval:1.0 / 60.0];
   }
   return self;

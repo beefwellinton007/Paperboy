@@ -56,6 +56,13 @@ class Paperboy : public Module {
     w_ = ctx.screen_w;
     h_ = ctx.screen_h;
     ctx_interactive_ = ctx.interactive;
+
+    // Config (see modules/paperboy/module.json).
+    std::string sp = ctx.settings.get("scroll_speed", "normal");
+    scroll_speed_ = sp == "slow" ? 90.0 : sp == "fast" ? 240.0 : 150.0;
+    day_len_ = ctx.settings.get_int("day_length", 40);
+    if (day_len_ < 1) day_len_ = 1;
+    show_score_ = ctx.settings.get_bool("show_score", true);
     street_top_ = h_ * 0.62;
     street_bot_ = h_ * 0.92;
     rider_x_ = w_ * 0.18;
@@ -78,8 +85,7 @@ class Paperboy : public Module {
 
   void tick(Context& ctx, double dt) override {
     c_time_ += dt;  // drives the day/dusk/night palette cycle in draw()
-    const double scroll = 150.0;  // px/s the world moves past the rider
-    camera_x_ += scroll * dt;
+    camera_x_ += scroll_speed_ * dt;  // px/s the world moves past the rider
 
     // Keep the street populated ahead and recycle what scrolls off-screen.
     double rightmost = 0;
@@ -143,7 +149,7 @@ class Paperboy : public Module {
   }
 
   void draw(Canvas& c) override {
-    const double day = std::fmod(c_time_, kDayLen) / kDayLen;
+    const double day = std::fmod(c_time_, day_len_) / day_len_;
     c.clear(sky_color(day));
 
     // Sun/moon arcs across the sky with the day cycle.
@@ -195,7 +201,9 @@ class Paperboy : public Module {
     c.fill_rect(rx - 2, ry - 22, 10, 10, Color{235, 200, 160});// head
 
     // Score HUD (real text via the built-in font).
-    draw_text(c, 14, 14, "SCORE " + std::to_string(score_), 4, Color{255, 215, 0});
+    if (show_score_)
+      draw_text(c, 14, 14, "SCORE " + std::to_string(score_), 4,
+                Color{255, 215, 0});
     if (ctx_interactive_)
       draw_text(c, 14, 44, "UP/DOWN MOVE  SPACE THROW", 2, Color{230, 230, 230});
   }
@@ -265,10 +273,13 @@ class Paperboy : public Module {
     }
   }
 
-  static constexpr double kDayLen = 40.0;  // seconds per full day cycle
-
   // Local clock for the palette cycle (draw() has no Context; tick advances it).
   double c_time_ = 0;
+
+  // Config, resolved from Settings in init().
+  double scroll_speed_ = 150.0;  // px/s
+  double day_len_ = 40.0;        // seconds per full day cycle
+  bool show_score_ = true;
 
   int w_ = 0, h_ = 0;
   bool ctx_interactive_ = false;
