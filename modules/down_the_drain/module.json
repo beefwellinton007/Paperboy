@@ -1,0 +1,18 @@
+{
+  "id": "down-the-drain",
+  "name": "Down the Drain",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Particles spiral inward into a central drain, endlessly. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "swirl",
+      "label": "Swirl speed",
+      "type": "enum",
+      "options": ["slow", "normal", "fast"],
+      "default": "normal"
+    }
+  ]
+}

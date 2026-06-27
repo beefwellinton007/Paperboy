@@ -1,0 +1,18 @@
+{
+  "id": "confetti",
+  "name": "Confetti Factory",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Bursts of colorful confetti arc up, flutter, and fall. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "density",
+      "label": "Confetti density",
+      "type": "enum",
+      "options": ["light", "normal", "heavy"],
+      "default": "normal"
+    }
+  ]
+}

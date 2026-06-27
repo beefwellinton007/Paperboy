@@ -1,0 +1,24 @@
+{
+  "id": "hard-rain",
+  "name": "Hard Rain",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Diagonal rain with splashes and occasional lightning flashes. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "intensity",
+      "label": "Rain intensity",
+      "type": "enum",
+      "options": ["drizzle", "normal", "downpour"],
+      "default": "normal"
+    },
+    {
+      "key": "lightning",
+      "label": "Lightning",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}

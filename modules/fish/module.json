@@ -1,0 +1,24 @@
+{
+  "id": "fish",
+  "name": "Fish! (Aquatic Realm)",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "A virtual aquarium: a school of fish flocks with boid steering, bubbles rise, seaweed sways. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "school_size",
+      "label": "School size",
+      "type": "enum",
+      "options": ["small", "normal", "large"],
+      "default": "normal"
+    },
+    {
+      "key": "bubbles",
+      "label": "Bubbles",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}

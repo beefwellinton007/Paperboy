@@ -1,0 +1,19 @@
+# Build output
+build/
+out/
+cmake-build-*/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Packaging artifacts
+*.scr
+*.saver
+*.dmg
+
+# Generated preview frames/gallery (regenerate with tools/preview.sh).
+# The committed headline image lives at docs/preview/montage.png.
+preview-out/

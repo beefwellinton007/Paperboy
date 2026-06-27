@@ -1,0 +1,19 @@
+{
+  "id": "string-theory",
+  "name": "String Theory",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Animated string-art envelopes between Lissajous-moving anchors, with cycling color. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "strings",
+      "label": "Strings per figure",
+      "type": "int",
+      "min": 4,
+      "max": 40,
+      "default": 14
+    }
+  ]
+}

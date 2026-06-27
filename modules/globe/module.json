@@ -1,0 +1,18 @@
+{
+  "id": "globe",
+  "name": "Globe",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "A slowly rotating wireframe Earth with continents, drawn via 3D projection. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "spin_speed",
+      "label": "Spin speed",
+      "type": "enum",
+      "options": ["slow", "normal", "fast"],
+      "default": "normal"
+    }
+  ]
+}

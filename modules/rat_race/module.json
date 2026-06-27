@@ -1,0 +1,19 @@
+{
+  "id": "rat-race",
+  "name": "Rat Race",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Mice scurry laps around an oval track with speed bursts; the leader wears a crown. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "racers",
+      "label": "Number of racers",
+      "type": "int",
+      "min": 2,
+      "max": 12,
+      "default": 6
+    }
+  ]
+}

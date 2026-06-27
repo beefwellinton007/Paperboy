@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://afterdark.example/module.schema.json",
+  "title": "AfterDark module.json",
+  "description": "Manifest for an AfterDark recreation-suite module. Drives the catalog and the per-module config UI on every platform.",
+  "type": "object",
+  "required": ["id", "name", "version", "category"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable slug, must match ModuleInfo.id in code."
+    },
+    "name": { "type": "string", "description": "Display name." },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Module semver, independent of the suite version."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["ambient", "interactive"],
+      "description": "ambient = classic eye candy; interactive = playable/game-style."
+    },
+    "author": { "type": "string" },
+    "description": { "type": "string" },
+    "assets": {
+      "type": "array",
+      "description": "Relative paths to sprites/audio/fonts bundled with the module.",
+      "items": { "type": "string" }
+    },
+    "settings": {
+      "type": "array",
+      "description": "Declarative settings; the host renders these into the config UI on Windows and macOS from this one declaration.",
+      "items": {
+        "type": "object",
+        "required": ["key", "label", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "type": { "type": "string", "enum": ["bool", "int", "float", "enum", "color"] },
+          "default": {},
+          "min": { "type": "number" },
+          "max": { "type": "number" },
+          "options": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

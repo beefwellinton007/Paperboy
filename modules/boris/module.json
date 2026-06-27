@@ -1,0 +1,18 @@
+{
+  "id": "boris",
+  "name": "Boris the Cat",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "A cat strolls across the screen, sits to wash, and curls up for a nap. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "nap_frequency",
+      "label": "Nap frequency",
+      "type": "enum",
+      "options": ["rare", "normal", "sleepy"],
+      "default": "normal"
+    }
+  ]
+}

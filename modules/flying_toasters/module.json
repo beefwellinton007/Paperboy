@@ -1,0 +1,26 @@
+{
+  "id": "flying-toasters",
+  "name": "Flying Toasters",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Winged toasters and toast drift diagonally across a night sky. Original-art homage to the After Dark icon.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "density",
+      "label": "Number of toasters",
+      "type": "int",
+      "min": 4,
+      "max": 60,
+      "default": 16
+    },
+    {
+      "key": "toast_ratio",
+      "label": "Toast frequency",
+      "type": "enum",
+      "options": ["none", "rare", "normal", "lots"],
+      "default": "normal"
+    }
+  ]
+}

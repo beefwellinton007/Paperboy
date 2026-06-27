@@ -1,0 +1,48 @@
+name: CI
+
+# Builds the engine + modules and runs the headless per-module smoke test.
+# The native .scr/.saver hosts build on their own platform runners (added with
+# Phase 1 packaging).
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build-and-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # SDL2 enables the windowed backend (Linux/macOS) and the Windows .scr
+      # host. The macOS .saver uses Core Graphics and needs no SDL2. Headless
+      # smoke tests run with the null backend regardless.
+      - name: Install SDL2 (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libsdl2-dev
+
+      - name: Install SDL2 (macOS)
+        if: runner.os == 'macOS'
+        run: brew install sdl2
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -j
+
+      - name: Smoke test every module (headless)
+        shell: bash
+        run: |
+          BIN=build/ad-harness
+          [ -f build/Release/ad-harness.exe ] && BIN=build/Release/ad-harness.exe
+          # tr -d '\r': Windows emits CRLF, which would corrupt the module names.
+          for m in $("$BIN" --list | tail -n +2 | tr -d '\r'); do
+            echo "--- smoke: $m"
+            "$BIN" --module "$m" --headless --frames 180
+          done

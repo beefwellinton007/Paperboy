@@ -1,0 +1,30 @@
+{
+  "id": "starry-night",
+  "name": "Starry Night",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "City skyline under a gradient night sky with twinkling stars and shooting stars. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "star_density",
+      "label": "Star density",
+      "type": "enum",
+      "options": ["sparse", "normal", "dense"],
+      "default": "normal"
+    },
+    {
+      "key": "shooting_stars",
+      "label": "Shooting stars",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "city_lights",
+      "label": "Lit windows",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}
