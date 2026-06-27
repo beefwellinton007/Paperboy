@@ -134,6 +134,12 @@ renamed to the version, dated, tagged, and published.
   via `SDL_HINT_RENDER_SCALE_QUALITY`).
 
 ### Asset pipeline (for AI-generated art)
+- **Frame animation**: `ad::Animation` (numbered-frame sequences) + `load_animation`
+  (loads `name_1.adspr`, `name_2.adspr`, … or a single `name.adspr`) so animated
+  sprites (flapping wings, pedaling, cat walk) play at a set FPS. Verified.
+- **`docs/ART_PLAN.md`**: art-driven roadmap to reference-quality 2.0 — module
+  tiers, style guide, prioritized asset manifest, animation convention, and the
+  generate→integrate→preview loop.
 - **`.adspr` sprite format** + loader (`ad::load_adspr`, `core/asset.cpp`): raw
   RGBA, so the runtime needs no PNG/zlib decoder (dependency-free, cross-platform).
 - **`tools/pack_assets.py`**: converts PNGs (RGB/RGBA/gray/palette, 8-bit) to

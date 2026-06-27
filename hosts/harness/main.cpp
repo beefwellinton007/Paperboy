@@ -78,6 +78,11 @@ int main(int argc, char** argv) {
                   s.height(), p.r, p.g, p.b, p.a);
       return 0;
     }
+    if (std::string(argv[i]) == "--probe-anim" && i + 1 < argc) {
+      ad::Animation a = ad::load_animation(argv[i + 1], 8.0);
+      std::printf("anim: %d frames\n", a.size());
+      return a.empty() ? 1 : 0;
+    }
   }
 
   ad::Registry reg;

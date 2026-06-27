@@ -17,4 +17,9 @@ namespace ad {
 // on any error, so callers can fall back to procedural drawing.
 Sprite load_adspr(const std::string& path);
 
+// Loads a frame sequence: "<base>_1.adspr", "<base>_2.adspr", ... until one is
+// missing. Also accepts a single "<base>.adspr" as a 1-frame animation. Returns
+// an empty Animation if nothing loads. `fps` sets the playback rate.
+Animation load_animation(const std::string& base, double fps = 8.0);
+
 }  // namespace ad

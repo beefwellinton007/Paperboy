@@ -82,4 +82,26 @@ class Sprite {
   std::vector<Color> px_;
 };
 
+// A sequence of sprite frames played at a fixed rate. Built from numbered
+// assets (name_1, name_2, ...) by the asset loader.
+class Animation {
+ public:
+  void add(Sprite s) { frames_.push_back(std::move(s)); }
+  void set_fps(double fps) { fps_ = fps; }
+  bool empty() const { return frames_.empty(); }
+  int size() const { return static_cast<int>(frames_.size()); }
+
+  // The frame to show at time t (seconds). Loops.
+  const Sprite& frame(double t) const {
+    int n = static_cast<int>(frames_.size());
+    int i = n <= 1 ? 0 : static_cast<int>(t * fps_) % n;
+    if (i < 0) i += n;
+    return frames_[i];
+  }
+
+ private:
+  std::vector<Sprite> frames_;
+  double fps_ = 8.0;
+};
+
 }  // namespace ad

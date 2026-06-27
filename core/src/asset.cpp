@@ -27,4 +27,19 @@ Sprite load_adspr(const std::string& path) {
   return Sprite::from_rgba(w, h, rgba.data());
 }
 
+Animation load_animation(const std::string& base, double fps) {
+  Animation anim;
+  anim.set_fps(fps);
+  // Single-file form first.
+  Sprite single = load_adspr(base + ".adspr");
+  if (!single.empty()) anim.add(std::move(single));
+  // Numbered frames: base_1.adspr, base_2.adspr, ...
+  for (int i = 1;; ++i) {
+    Sprite s = load_adspr(base + "_" + std::to_string(i) + ".adspr");
+    if (s.empty()) break;
+    anim.add(std::move(s));
+  }
+  return anim;
+}
+
 }  // namespace ad
