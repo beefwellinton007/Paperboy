@@ -9,6 +9,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -58,12 +60,16 @@ class Confetti : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{15, 15, 22});
+    v_gradient(c, 0, 0, w_, h_, Color{20, 18, 30}, Color{8, 8, 14});
     for (const auto& p : pieces_) {
       if (!p.alive) continue;
       // "Tumble": width oscillates so pieces look like spinning flakes.
       int wpx = 2 + static_cast<int>(std::abs(std::cos(p.phase)) * 6);
-      c.fill_rect(static_cast<int>(p.x), static_cast<int>(p.y), wpx, 5, p.color);
+      int px = static_cast<int>(p.x), py = static_cast<int>(p.y);
+      Color halo = p.color;
+      halo.a = 60;
+      c.fill_rect(px - 1, py - 1, wpx + 2, 7, halo);  // soft glow
+      c.fill_rect(px, py, wpx, 5, p.color);
     }
   }
 

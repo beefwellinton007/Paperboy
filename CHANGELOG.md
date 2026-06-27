@@ -118,7 +118,9 @@ renamed to the version, dated, tagged, and published.
   spoked wheels.
 - Smooth/glow pass on ambient modules: **Gravity** (glowing balls + highlight +
   soft trails on a gradient), **Down the Drain** (glowing particles + gradient +
-  rimmed drain), **Warp** (fading streaks + glowing heads). Rollout continues.
+  rimmed drain), **Warp** (fading streaks + glowing heads), **Confetti** (gradient
+  + soft-glow pieces), **Hard Rain** (stormy gradient sky reacting to lightning).
+  Rollout continues.
 
 ### Efficient image blitting
 - **`Canvas::draw_rgba`** — scaled image blit with flip + alpha. SDL backend

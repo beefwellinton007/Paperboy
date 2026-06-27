@@ -10,6 +10,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -76,9 +78,13 @@ class HardRain : public Module {
   }
 
   void draw(Canvas& c) override {
-    int base = 18 + static_cast<int>((flash_ > 0 ? flash_ : 0) * 120);
-    uint8_t b = static_cast<uint8_t>(base > 255 ? 255 : base);
-    c.clear(Color{b, b, static_cast<uint8_t>(std::min(255, b + 12))});
+    int fl = static_cast<int>((flash_ > 0 ? flash_ : 0) * 120);
+    auto clampc = [](int v) { return static_cast<uint8_t>(v > 255 ? 255 : v); };
+    // Stormy vertical gradient (lighter toward the horizon), brightened by the
+    // lightning flash.
+    Color top{clampc(10 + fl), clampc(12 + fl), clampc(24 + fl)};
+    Color bot{clampc(28 + fl), clampc(32 + fl), clampc(46 + fl)};
+    v_gradient(c, 0, 0, w_, h_, top, bot);  // ground is redrawn below
 
     Color rain{150, 170, 210};
     for (const auto& d : drops_) {
