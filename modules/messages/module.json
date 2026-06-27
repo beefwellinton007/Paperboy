@@ -1,0 +1,25 @@
+{
+  "id": "messages",
+  "name": "Messages",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Your text drifts and bounces around the screen, changing color on each bounce. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "message",
+      "label": "Message text",
+      "type": "enum",
+      "options": ["AFTER DARK", "custom"],
+      "default": "AFTER DARK"
+    },
+    {
+      "key": "speed",
+      "label": "Drift speed",
+      "type": "enum",
+      "options": ["slow", "normal", "fast"],
+      "default": "normal"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "clocks",
+  "name": "Clocks",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "A grid of analog clocks, each ticking from a different start time. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "real_time",
+      "label": "Use real time",
+      "type": "bool",
+      "default": false
+    }
+  ]
+}

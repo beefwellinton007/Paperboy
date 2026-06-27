@@ -55,6 +55,8 @@ add_library(ad_modules STATIC
   modules/globe/globe.cpp
   modules/boris/boris.cpp
   modules/rat_race/rat_race.cpp
+  modules/messages/messages.cpp
+  modules/clocks/clocks.cpp
   modules/_template/template.cpp
 )
 target_include_directories(ad_modules PUBLIC ${CMAKE_SOURCE_DIR}/modules)

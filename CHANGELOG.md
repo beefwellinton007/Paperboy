@@ -68,6 +68,11 @@ renamed to the version, dated, tagged, and published.
   driven by a small Walk/Sit/Sleep state machine.
 - **Rat Race** module — recreation: mice scurry laps around an oval track with
   random speed bursts; the leader wears a crown.
+- **Messages** module — recreation: text drifts and bounces around the screen,
+  changing color on each bounce and cycling through a message list (user text
+  arrives once the config UI is wired).
+- **Clocks** module — recreation: a grid of analog clocks ticking from
+  different start times; adds a small reusable line-draw helper.
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.

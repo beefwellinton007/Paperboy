@@ -2,9 +2,11 @@
 
 #include "_template/template.h"
 #include "boris/boris.h"
+#include "clocks/clocks.h"
 #include "fish/fish.h"
 #include "flying_toasters/flying_toasters.h"
 #include "globe/globe.h"
+#include "messages/messages.h"
 #include "mowing_man/mowing_man.h"
 #include "paperboy/paperboy.h"
 #include "rat_race/rat_race.h"
@@ -27,12 +29,14 @@ void register_all_modules(Registry& reg) {
   reg.add("globe", &make_globe);
   reg.add("boris", &make_boris);
   reg.add("rat-race", &make_rat_race);
+  reg.add("messages", &make_messages);
+  reg.add("clocks", &make_clocks);
   // The copy-me template (also a working ambient starfield).
   reg.add("starfield", &make_template_starfield);
 
   // More classic recreations land here as they're built:
-  //   reg.add("messages", &make_messages);
-  //   reg.add("clocks",   &make_clocks);
+  //   reg.add("confetti", &make_confetti);
+  //   reg.add("gravity",  &make_gravity);
   //   ...
 }
 

@@ -30,6 +30,8 @@ modules/
   globe/            recreation (rotating wireframe Earth)
   boris/            recreation (a wandering cat)
   rat_race/         recreation (mice racing a track)
+  messages/         recreation (bouncing text)
+  clocks/           recreation (grid of analog clocks)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester
