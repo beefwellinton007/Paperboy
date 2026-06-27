@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -48,9 +50,13 @@ class Boris : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{24, 22, 32});
-    // Floor line.
-    c.fill_rect(0, y_ + 18, w_, 3, Color{50, 46, 60});
+    // Cozy room: wall gradient over a floor band, with a soft shadow under Boris.
+    int floor = y_ + 18;
+    v_gradient(c, 0, 0, w_, h_, Color{40, 34, 50}, Color{26, 22, 34});
+    c.fill_rect(0, floor, w_, h_ - floor, Color{46, 38, 44});
+    c.fill_rect(0, floor, w_, 2, Color{70, 60, 72});
+    int sx = static_cast<int>(x_);
+    c.fill_rect(sx - 20, floor - 2, 40, 4, Color{0, 0, 0, 80});  // contact shadow
     if (state_ == State::Sleep) draw_sleeping(c);
     else draw_upright(c);
   }

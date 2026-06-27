@@ -121,7 +121,9 @@ renamed to the version, dated, tagged, and published.
   rimmed drain), **Warp** (fading streaks + glowing heads), **Confetti** (gradient
   + soft-glow pieces), **Hard Rain** (stormy gradient sky reacting to lightning),
   **Fish** (swaying underwater light shafts), **Messages** (gradient + neon glow
-  text), **Spotlight** (feathered beam penumbra). Rollout continues.
+  text), **Spotlight** (feathered beam penumbra), **Clocks** (gradient + dial
+  faces + glowing hub), **Boris** (room gradient + floor + contact shadow),
+  **Rat Race** (turf gradient + track shadow). Rollout continues.
 
 ### Efficient image blitting
 - **`Canvas::draw_rgba`** — scaled image blit with flip + alpha. SDL backend

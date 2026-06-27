@@ -10,6 +10,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -59,10 +61,16 @@ class RatRace : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{30, 90, 40});  // grass infield
+    v_gradient(c, 0, 0, w_, h_, Color{42, 110, 52}, Color{24, 74, 34});  // turf
     int cx = w_ / 2, cy = h_ / 2;
 
-    // Track: a thick oval drawn as a ring of segments.
+    // Track: a thick oval drawn as a ring of segments (with a soft shadow ring).
+    for (int i = 0; i < 120; ++i) {
+      double a = i / 120.0 * 6.2831853;
+      int sxp = static_cast<int>(cx + std::cos(a) * rx_);
+      int syp = static_cast<int>(cy + std::sin(a) * ry_ + 3);
+      c.fill_rect(sxp - 7, syp - 5, 14, 14, Color{0, 0, 0, 50});  // track shadow
+    }
     for (int i = 0; i < 120; ++i) {
       double a = i / 120.0 * 6.2831853;
       int x = static_cast<int>(cx + std::cos(a) * rx_);

@@ -9,6 +9,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -46,7 +48,7 @@ class Clocks : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{18, 20, 30});
+    v_gradient(c, 0, 0, w_, h_, Color{26, 28, 42}, Color{10, 11, 18});
     int ox = (w_ - cols_ * cell_) / 2;
     int oy = (h_ - rows_ * cell_) / 2;
     for (int r = 0; r < rows_; ++r)
@@ -60,6 +62,10 @@ class Clocks : public Module {
 
  private:
   void draw_clock(Canvas& c, int cx, int cy, int rad, double t) {
+    // Dark dial face with a soft rim.
+    fill_circle(c, cx, cy, rad + 5, Color{18, 20, 30, 180});
+    fill_circle(c, cx, cy, rad + 5, Color{70, 80, 110, 90});
+    fill_circle(c, cx, cy, rad + 1, Color{24, 26, 38});
     // Face ring (12 tick marks) + center hub.
     for (int i = 0; i < 12; ++i) {
       double a = i / 12.0 * 6.2831853 - 1.5707963;
@@ -67,7 +73,6 @@ class Clocks : public Module {
       int y = cy + static_cast<int>(std::sin(a) * rad);
       c.fill_rect(x - 2, y - 2, 4, 4, Color{180, 185, 200});
     }
-    c.fill_rect(cx - 3, cy - 3, 6, 6, Color{230, 230, 240});
 
     double secs = std::fmod(t, 43200.0);
     double hour = secs / 3600.0;          // 0..12
@@ -82,6 +87,7 @@ class Clocks : public Module {
     hand(hour / 12.0, static_cast<int>(rad * 0.5), 4, Color{230, 230, 240});   // hour
     hand(minute / 60.0, static_cast<int>(rad * 0.8), 3, Color{200, 210, 230});  // minute
     hand(second / 60.0, static_cast<int>(rad * 0.9), 1, Color{230, 90, 90});    // second
+    glow(c, cx, cy, 4, Color{230, 90, 90, 150}, 3);  // glowing center hub
   }
 
   int w_ = 0, h_ = 0, cell_ = 100, cols_ = 1, rows_ = 1;
