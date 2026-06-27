@@ -13,6 +13,8 @@
 
 namespace ad {
 
+static_assert(sizeof(Color) == 4, "Color must be 4 tightly-packed bytes");
+
 class Sprite {
  public:
   Sprite() = default;
@@ -53,19 +55,26 @@ class Sprite {
   int width() const { return w_; }
   int height() const { return h_; }
   const Color& at(int x, int y) const { return px_[y * w_ + x]; }
+  // Contiguous RGBA bytes (Color is 4 tightly-packed bytes).
+  const unsigned char* rgba() const {
+    return reinterpret_cast<const unsigned char*>(px_.data());
+  }
 
-  // Draw at (x,y) top-left, each source pixel scaled to scale×scale. `flip_x`
-  // mirrors horizontally. `tint_a` scales overall opacity (255 = opaque).
+  // Draw at (x,y) top-left, integer-scaled. `flip_x` mirrors; `tint_a` scales
+  // opacity. Routes through Canvas::draw_rgba (one GPU call on real backends).
   void blit(Canvas& c, int x, int y, int scale = 1, bool flip_x = false,
             uint8_t tint_a = 255) const {
-    for (int sy = 0; sy < h_; ++sy) {
-      for (int sx = 0; sx < w_; ++sx) {
-        Color p = px_[sy * w_ + (flip_x ? (w_ - 1 - sx) : sx)];
-        if (p.a == 0) continue;
-        if (tint_a != 255) p.a = static_cast<uint8_t>(p.a * tint_a / 255);
-        c.fill_rect(x + sx * scale, y + sy * scale, scale, scale, p);
-      }
-    }
+    if (px_.empty()) return;
+    c.draw_rgba(this, rgba(), w_, h_, x, y, w_ * scale, h_ * scale, flip_x,
+                tint_a);
+  }
+
+  // Draw scaled to an explicit destination size (smooth scaling on real
+  // backends) — use for high-res art sized to the screen.
+  void blit_scaled(Canvas& c, int x, int y, int dw, int dh, bool flip_x = false,
+                   uint8_t tint_a = 255) const {
+    if (px_.empty()) return;
+    c.draw_rgba(this, rgba(), w_, h_, x, y, dw, dh, flip_x, tint_a);
   }
 
  private:

@@ -5,6 +5,8 @@
 
 #include <SDL.h>
 
+#include <unordered_map>
+
 #include "afterdark/backend.h"
 
 namespace ad {
@@ -36,11 +38,43 @@ class SdlCanvas : public Canvas {
     SDL_Rect rect{x, y, w, h};
     SDL_RenderFillRect(r_, &rect);
   }
+
+  // GPU-textured image blit: one RenderCopyEx per sprite. Textures are cached
+  // by the source pixel pointer (sprites are stable for the program lifetime).
+  void draw_rgba(const void* key, const unsigned char* rgba, int sw, int sh,
+                 int dx, int dy, int dw, int dh, bool flip_x,
+                 unsigned char alpha) override {
+    SDL_Texture* tex = nullptr;
+    auto it = cache_.find(key);
+    if (it != cache_.end()) {
+      tex = it->second;
+    } else {
+      tex = SDL_CreateTexture(r_, SDL_PIXELFORMAT_ABGR8888,
+                              SDL_TEXTUREACCESS_STATIC, sw, sh);
+      if (tex) {
+        SDL_UpdateTexture(tex, nullptr, rgba, sw * 4);
+        SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+      }
+      cache_[key] = tex;
+    }
+    if (!tex) return;
+    SDL_SetTextureAlphaMod(tex, alpha);
+    SDL_Rect dst{dx, dy, dw, dh};
+    SDL_RenderCopyEx(r_, tex, nullptr, &dst, 0, nullptr,
+                     flip_x ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+  }
+
   void resize(int w, int h) { w_ = w; h_ = h; }
+  void destroy_textures() {
+    for (auto& kv : cache_)
+      if (kv.second) SDL_DestroyTexture(kv.second);
+    cache_.clear();
+  }
 
  private:
   SDL_Renderer* r_;
   int w_, h_;
+  std::unordered_map<const void*, SDL_Texture*> cache_;
 };
 
 enum class Mode { Windowed, Fullscreen, Embedded };
@@ -52,6 +86,7 @@ class SdlBackend : public Backend {
 
   bool init(int w, int h, const std::string& title) override {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) return false;
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");  // smooth texture scaling
     if (mode_ == Mode::Embedded && embed_) {
       win_ = SDL_CreateWindowFrom(embed_);  // render into a host-owned window
     } else {
@@ -111,6 +146,7 @@ class SdlBackend : public Backend {
   bool should_close() const override { return false; }
 
   void shutdown() override {
+    if (canvas_) canvas_->destroy_textures();
     if (ren_) SDL_DestroyRenderer(ren_);
     if (win_) SDL_DestroyWindow(win_);
     SDL_Quit();

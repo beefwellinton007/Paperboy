@@ -75,6 +75,29 @@ class Canvas {
   virtual int height() const = 0;
   virtual void clear(Color c) = 0;
   virtual void fill_rect(int x, int y, int w, int h, Color c) = 0;
+
+  // Draw an RGBA image scaled into the destination rect, with optional
+  // horizontal flip and an overall alpha multiplier. `cache_key` is a stable
+  // pointer identifying the source pixels (backends may cache a GPU texture by
+  // it). The default does a correct (if slow) per-pixel copy via fill_rect;
+  // the SDL / Core Graphics / image backends override this for speed.
+  virtual void draw_rgba(const void* cache_key, const unsigned char* rgba,
+                         int sw, int sh, int dx, int dy, int dw, int dh,
+                         bool flip_x, unsigned char alpha) {
+    (void)cache_key;
+    if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0) return;
+    for (int yy = 0; yy < dh; ++yy) {
+      int sy = yy * sh / dh;
+      for (int xx = 0; xx < dw; ++xx) {
+        int sx = xx * sw / dw;
+        if (flip_x) sx = sw - 1 - sx;
+        const unsigned char* p = rgba + (static_cast<size_t>(sy) * sw + sx) * 4;
+        unsigned char a = static_cast<unsigned char>(p[3] * alpha / 255);
+        if (a == 0) continue;
+        fill_rect(dx + xx, dy + yy, 1, 1, Color{p[0], p[1], p[2], a});
+      }
+    }
+  }
 };
 
 // ---------------------------------------------------------------------------

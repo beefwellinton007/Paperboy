@@ -117,6 +117,16 @@ renamed to the version, dated, tagged, and published.
   soft glow; **Paperboy** rider is now a pixel-art kid on a bike with spinning
   spoked wheels. (Rollout to the rest of the catalog continues.)
 
+### Efficient image blitting
+- **`Canvas::draw_rgba`** — scaled image blit with flip + alpha. SDL backend
+  uploads each sprite to a GPU texture (cached by source pointer) and draws it
+  with one `SDL_RenderCopyEx`; the macOS Core Graphics backend uses a cached
+  `CGImage`; the preview backend does a fast CPU blit; a correct per-pixel
+  default covers any other backend. This makes high-res AI-generated sprites
+  render in one call instead of ~thousands of `fill_rect`s.
+- `Sprite::blit` / `blit_scaled` now route through `draw_rgba` (smooth scaling
+  via `SDL_HINT_RENDER_SCALE_QUALITY`).
+
 ### Asset pipeline (for AI-generated art)
 - **`.adspr` sprite format** + loader (`ad::load_adspr`, `core/asset.cpp`): raw
   RGBA, so the runtime needs no PNG/zlib decoder (dependency-free, cross-platform).

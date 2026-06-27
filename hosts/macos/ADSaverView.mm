@@ -14,6 +14,7 @@
 #import <ScreenSaver/ScreenSaver.h>
 
 #include <memory>
+#include <unordered_map>
 
 #include "afterdark/backend.h"
 #include "afterdark/host.h"
@@ -38,9 +39,42 @@ class CGCanvas : public ad::Canvas {
     CGContextFillRect(ctx_, CGRectMake(x, h_ - y - h, w, h));
   }
 
+  // Image blit via CGImage (cached by source pointer).
+  void draw_rgba(const void* key, const unsigned char* rgba, int sw, int sh,
+                 int dx, int dy, int dw, int dh, bool flip_x,
+                 unsigned char alpha) override {
+    if (!ctx_) return;
+    CGImageRef img = nullptr;
+    auto it = cache_.find(key);
+    if (it != cache_.end()) {
+      img = it->second;
+    } else {
+      CGColorSpaceRef cs = CGColorSpaceCreateDeviceRGB();
+      CGContextRef bmp = CGBitmapContextCreate(
+          (void*)rgba, sw, sh, 8, sw * 4, cs,
+          kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault);
+      // Note: source is straight-alpha; for crisp art this is acceptable.
+      img = bmp ? CGBitmapContextCreateImage(bmp) : nullptr;
+      if (bmp) CGContextRelease(bmp);
+      CGColorSpaceRelease(cs);
+      cache_[key] = img;
+    }
+    if (!img) return;
+    CGContextSaveGState(ctx_);
+    CGContextSetAlpha(ctx_, alpha / 255.0);
+    CGRect dst = CGRectMake(dx, h_ - dy - dh, dw, dh);
+    if (flip_x) {
+      CGContextTranslateCTM(ctx_, dst.origin.x * 2 + dst.size.width, 0);
+      CGContextScaleCTM(ctx_, -1, 1);
+    }
+    CGContextDrawImage(ctx_, dst, img);
+    CGContextRestoreGState(ctx_);
+  }
+
  private:
   int w_, h_;
   CGContextRef ctx_ = nullptr;
+  std::unordered_map<const void*, CGImageRef> cache_;
 };
 
 class CGBackend : public ad::Backend {

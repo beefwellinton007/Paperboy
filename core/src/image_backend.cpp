@@ -51,6 +51,33 @@ class ImageCanvas : public Canvas {
     }
   }
 
+  // Fast CPU image blit (nearest sample + alpha blend) — avoids the per-pixel
+  // fill_rect default for the preview renderer.
+  void draw_rgba(const void*, const unsigned char* rgba, int sw, int sh, int dx,
+                 int dy, int dw, int dh, bool flip_x,
+                 unsigned char alpha) override {
+    if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0) return;
+    for (int yy = 0; yy < dh; ++yy) {
+      int py = dy + yy;
+      if (py < 0 || py >= h_) continue;
+      int sy = yy * sh / dh;
+      for (int xx = 0; xx < dw; ++xx) {
+        int px = dx + xx;
+        if (px < 0 || px >= w_) continue;
+        int sx = xx * sw / dw;
+        if (flip_x) sx = sw - 1 - sx;
+        const unsigned char* s = rgba + (static_cast<size_t>(sy) * sw + sx) * 4;
+        int a = s[3] * alpha / 255;
+        if (a == 0) continue;
+        uint8_t* d = &buf_[(static_cast<size_t>(py) * w_ + px) * 3];
+        int ia = 255 - a;
+        d[0] = static_cast<uint8_t>((s[0] * a + d[0] * ia) / 255);
+        d[1] = static_cast<uint8_t>((s[1] * a + d[1] * ia) / 255);
+        d[2] = static_cast<uint8_t>((s[2] * a + d[2] * ia) / 255);
+      }
+    }
+  }
+
   const std::vector<uint8_t>& pixels() const { return buf_; }
 
  private:
