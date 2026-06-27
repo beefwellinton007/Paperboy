@@ -36,6 +36,9 @@ modules/
   gravity/          recreation (bouncing balls)
   hard_rain/        recreation (rain + lightning)
   satori/           recreation (kaleidoscopic art)
+  down_the_drain/   recreation (whirlpool)
+  string_theory/    recreation (string art)
+  bad_dog/          recreation (romping dog)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester

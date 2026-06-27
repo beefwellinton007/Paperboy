@@ -81,6 +81,12 @@ renamed to the version, dated, tagged, and published.
   lightning flashes (intensity + lightning settings via the config schema).
 - **Satori** module — recreation: evolving kaleidoscopic rose-curve art with
   cycling color (symmetry + fade settings via the config schema).
+- **Down the Drain** module — recreation: particles spiral into a central drain
+  endlessly (swirl-speed setting via the config schema).
+- **String Theory** module — recreation: animated string-art envelopes between
+  Lissajous-moving anchors with cycling color (strings-count setting).
+- **Bad Dog!** module — recreation: a dog romps around leaving fading paw prints
+  and barking now and then.
 
 ### Platform hosts (in progress)
 - **Shared HostSession** (`core/include/afterdark/host.h`): step-based per-frame

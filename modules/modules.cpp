@@ -1,9 +1,11 @@
 #include "modules.h"
 
 #include "_template/template.h"
+#include "bad_dog/bad_dog.h"
 #include "boris/boris.h"
 #include "clocks/clocks.h"
 #include "confetti/confetti.h"
+#include "down_the_drain/down_the_drain.h"
 #include "fish/fish.h"
 #include "gravity/gravity.h"
 #include "hard_rain/hard_rain.h"
@@ -15,6 +17,7 @@
 #include "rat_race/rat_race.h"
 #include "satori/satori.h"
 #include "spotlight/spotlight.h"
+#include "string_theory/string_theory.h"
 #include "starry_night/starry_night.h"
 #include "warp/warp.h"
 
@@ -39,12 +42,15 @@ void register_all_modules(Registry& reg) {
   reg.add("gravity", &make_gravity);
   reg.add("hard-rain", &make_hard_rain);
   reg.add("satori", &make_satori);
+  reg.add("down-the-drain", &make_down_the_drain);
+  reg.add("string-theory", &make_string_theory);
+  reg.add("bad-dog", &make_bad_dog);
   // The copy-me template (also a working ambient starfield).
   reg.add("starfield", &make_template_starfield);
 
   // More classic recreations land here as they're built:
-  //   reg.add("bad-dog",     &make_bad_dog);
-  //   reg.add("down-drain",  &make_down_the_drain);
+  //   reg.add("lunatic-fringe", &make_lunatic_fringe);
+  //   reg.add("meadow",         &make_meadow);
   //   ...
 }
 
