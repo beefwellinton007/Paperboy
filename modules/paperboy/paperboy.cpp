@@ -14,8 +14,11 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
+#include "afterdark/draw.h"
+#include "afterdark/sprite.h"
 #include "afterdark/text.h"
 
 namespace ad {
@@ -200,14 +203,7 @@ class Paperboy : public Module {
                   Color{245, 245, 235});
     }
 
-    // The paperboy: two wheels, a frame, a body, a head.
-    int rx = static_cast<int>(rider_x_);
-    int ry = static_cast<int>(rider_y_);
-    c.fill_rect(rx - 14, ry + 6, 12, 12, Color{20, 20, 20});  // back wheel
-    c.fill_rect(rx + 8, ry + 6, 12, 12, Color{20, 20, 20});   // front wheel
-    c.fill_rect(rx - 8, ry + 2, 20, 4, Color{180, 30, 30});   // frame
-    c.fill_rect(rx - 4, ry - 12, 10, 14, Color{40, 90, 200}); // body
-    c.fill_rect(rx - 2, ry - 22, 10, 10, Color{235, 200, 160});// head
+    draw_rider(c);
 
     // Score HUD (real text via the built-in font).
     if (show_score_)
@@ -218,6 +214,51 @@ class Paperboy : public Module {
   }
 
  private:
+  static const Sprite& rider_sprite() {
+    static const Sprite s(
+        {
+            "...HHHHH..",
+            "..HHHHHHH.",
+            "...SSSS...",
+            "...SSSS...",
+            "..BBBBBB.S",  // arm reaches forward (skin tip)
+            ".BBBBBBBSS",
+            ".BBBBBBBB.",
+            ".bBBBBBb..",
+            ".bBBBBb...",
+            "..LLLLL...",
+            "..LL.LL...",
+            ".LL...LL..",
+        },
+        {{'H', {215, 65, 55}},   // cap
+         {'S', {235, 200, 160}}, // skin
+         {'B', {55, 105, 215}},  // shirt
+         {'b', {38, 78, 175}},   // shirt shadow
+         {'L', {60, 60, 92}}});  // pants
+    return s;
+  }
+
+  void draw_rider(Canvas& c) {
+    int rx = static_cast<int>(rider_x_);
+    int ry = static_cast<int>(rider_y_);
+    const Color tire{25, 25, 30}, spoke{150, 155, 165}, frame{200, 50, 45};
+    int wy = ry + 14, wr = 9;
+    double spin = camera_x_ * 0.12;  // wheels spin with travel
+    for (int wx : {rx - 12, rx + 12}) {
+      fill_circle(c, wx, wy, wr, tire);
+      for (int k = 0; k < 4; ++k) {
+        double a = spin + k * 1.5707963;
+        line(c, wx, wy, wx + static_cast<int>(std::cos(a) * (wr - 2)),
+             wy + static_cast<int>(std::sin(a) * (wr - 2)), 1, spoke);
+      }
+      c.fill_rect(wx - 1, wy - 1, 3, 3, spoke);  // hub
+    }
+    line(c, rx - 12, wy, rx + 12, wy, 3, frame);   // down tube
+    line(c, rx + 12, wy, rx + 4, ry, 3, frame);    // seat/fork
+    const Sprite& r = rider_sprite();
+    r.blit(c, rx - r.width() * 3 / 2 + 2, ry - 24, 3);
+  }
+
   void spawn_house(Context& ctx, double world_x) {
     House hsh;
     hsh.world_x = world_x;

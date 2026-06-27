@@ -114,7 +114,8 @@ renamed to the version, dated, tagged, and published.
   files/decoders needed.
 - Showcase upgrades: **Flying Toasters** now uses hand-drawn toaster/toast/wing
   sprites on a gradient sky; **Starry Night** bright stars now twinkle with a
-  soft glow. (Rollout to the rest of the catalog continues.)
+  soft glow; **Paperboy** rider is now a pixel-art kid on a bike with spinning
+  spoked wheels. (Rollout to the rest of the catalog continues.)
 
 ### Previews / tooling
 - **Image backend** (`make_image_backend`): rasterizes frames to RGB and writes
