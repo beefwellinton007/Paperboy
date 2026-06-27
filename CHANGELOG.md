@@ -120,7 +120,8 @@ renamed to the version, dated, tagged, and published.
   soft trails on a gradient), **Down the Drain** (glowing particles + gradient +
   rimmed drain), **Warp** (fading streaks + glowing heads), **Confetti** (gradient
   + soft-glow pieces), **Hard Rain** (stormy gradient sky reacting to lightning),
-  **Fish** (swaying underwater light shafts). Rollout continues.
+  **Fish** (swaying underwater light shafts), **Messages** (gradient + neon glow
+  text), **Spotlight** (feathered beam penumbra). Rollout continues.
 
 ### Efficient image blitting
 - **`Canvas::draw_rgba`** — scaled image blit with flip + alpha. SDL backend

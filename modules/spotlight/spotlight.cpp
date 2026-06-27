@@ -74,9 +74,15 @@ class Spotlight : public Module {
       int left = cx - half, right = cx + half;
       if (left > 0) c.fill_rect(0, y, left, 1, dark);
       if (right < w_) c.fill_rect(right, y, w_ - right, 1, dark);
-      // A thin dim ring just inside the beam edge fakes a soft vignette.
-      if (left >= 0) c.fill_rect(left, y, 4, 1, Color{8, 8, 10});
-      if (right - 4 < w_ && right >= 4) c.fill_rect(right - 4, y, 4, 1, Color{8, 8, 10});
+      // Feathered penumbra: graduated translucent dark bands just inside the
+      // edge so the beam fades in rather than cutting off hard.
+      const int FE = 16;
+      for (int k = 0; k < FE; ++k) {
+        unsigned char a = static_cast<unsigned char>(200 - k * 200 / FE);
+        Color band{0, 0, 0, a};
+        c.fill_rect(left + k, y, 1, 1, band);
+        c.fill_rect(right - 1 - k, y, 1, 1, band);
+      }
     }
   }
 

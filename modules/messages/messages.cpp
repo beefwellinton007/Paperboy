@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "afterdark/draw.h"
 #include "afterdark/text.h"
 
 namespace ad {
@@ -56,9 +57,17 @@ class Messages : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{8, 8, 16});
-    draw_text(c, static_cast<int>(x_), static_cast<int>(y_), msgs_[idx_], scale_,
-              color_);
+    v_gradient(c, 0, 0, w_, h_, Color{14, 12, 26}, Color{4, 4, 10});
+    int tx = static_cast<int>(x_), ty = static_cast<int>(y_);
+    // Neon glow: a translucent offset halo behind the crisp text.
+    Color halo = color_;
+    halo.a = 70;
+    for (int dx = -1; dx <= 1; ++dx)
+      for (int dy = -1; dy <= 1; ++dy)
+        if (dx || dy)
+          draw_text(c, tx + dx * scale_, ty + dy * scale_, msgs_[idx_], scale_,
+                    halo);
+    draw_text(c, tx, ty, msgs_[idx_], scale_, color_);
   }
 
  private:
