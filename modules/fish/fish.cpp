@@ -81,10 +81,26 @@ class Fish : public Module {
 
   void draw(Canvas& c) override {
     draw_water(c);
+    draw_god_rays(c);
     draw_weeds(c);
     for (std::size_t i = 0; i < pos_.size(); ++i) draw_fish(c, i);
     draw_bubbles(c);
     c.fill_rect(0, sand_, w_, h_ - sand_, Color{200, 180, 130});  // sand
+  }
+
+  // Shafts of light slanting down from the surface, swaying slowly.
+  void draw_god_rays(Canvas& c) {
+    int rays = std::max(3, w_ / 220);
+    for (int i = 0; i < rays; ++i) {
+      double base = (i + 0.5) * w_ / rays;
+      double sway = std::sin(time_ * 0.3 + i) * w_ * 0.04;
+      int topx = static_cast<int>(base + sway);
+      int rw = std::max(18, w_ / 24);
+      for (int s = 0; s < 4; ++s) {  // a few translucent slabs = soft beam
+        int x = topx + s * rw / 4 - rw / 2;
+        c.fill_rect(x, 0, rw / 2, sand_, Color{200, 230, 245, 6});
+      }
+    }
   }
 
  private:
