@@ -11,6 +11,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -122,7 +124,15 @@ class StarryNight : public Module {
     for (const auto& s : stars_) {
       double tw = 0.5 + 0.5 * std::sin(time_ * s.rate + s.phase);
       uint8_t b = static_cast<uint8_t>(110 + tw * 145);
-      c.fill_rect(s.x, s.y, s.size, s.size, Color{b, b, static_cast<uint8_t>(std::min(255, b + 10))});
+      Color col{b, b, static_cast<uint8_t>(std::min(255, b + 10))};
+      // Brighter stars get a soft twinkling glow halo.
+      if (s.size > 1) {
+        Color halo = col;
+        halo.a = static_cast<uint8_t>(70 + tw * 90);
+        glow(c, s.x, s.y, 3 + static_cast<int>(tw * 3), halo, 3);
+      } else {
+        c.fill_rect(s.x, s.y, s.size, s.size, col);
+      }
     }
   }
 

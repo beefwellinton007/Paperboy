@@ -30,14 +30,23 @@ class ImageCanvas : public Canvas {
   }
 
   void fill_rect(int x, int y, int w, int h, Color c) override {
+    if (c.a == 0) return;
     int x0 = x < 0 ? 0 : x, y0 = y < 0 ? 0 : y;
     int x1 = x + w > w_ ? w_ : x + w, y1 = y + h > h_ ? h_ : y + h;
     for (int yy = y0; yy < y1; ++yy) {
       uint8_t* row = &buf_[(static_cast<size_t>(yy) * w_ + x0) * 3];
-      for (int xx = x0; xx < x1; ++xx) {
-        *row++ = c.r;
-        *row++ = c.g;
-        *row++ = c.b;
+      if (c.a == 255) {
+        for (int xx = x0; xx < x1; ++xx) {
+          *row++ = c.r; *row++ = c.g; *row++ = c.b;
+        }
+      } else {
+        int a = c.a, ia = 255 - a;  // src-over blend
+        for (int xx = x0; xx < x1; ++xx) {
+          row[0] = static_cast<uint8_t>((c.r * a + row[0] * ia) / 255);
+          row[1] = static_cast<uint8_t>((c.g * a + row[1] * ia) / 255);
+          row[2] = static_cast<uint8_t>((c.b * a + row[2] * ia) / 255);
+          row += 3;
+        }
       }
     }
   }

@@ -65,6 +65,7 @@ class SdlBackend : public Backend {
     ren_ = SDL_CreateRenderer(win_, -1, SDL_RENDERER_ACCELERATED |
                                             SDL_RENDERER_PRESENTVSYNC);
     if (!ren_) return false;
+    SDL_SetRenderDrawBlendMode(ren_, SDL_BLENDMODE_BLEND);  // honor Color.a
     canvas_ = std::make_unique<SdlCanvas>(ren_, w, h);
     return true;
   }

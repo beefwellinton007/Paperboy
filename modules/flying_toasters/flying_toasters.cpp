@@ -13,7 +13,11 @@
 
 #include <algorithm>
 #include <cmath>
+#include <unordered_map>
 #include <vector>
+
+#include "afterdark/draw.h"
+#include "afterdark/sprite.h"
 
 namespace ad {
 namespace {
@@ -57,7 +61,8 @@ class FlyingToasters : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{12, 12, 28});  // deep night-blue, like the original
+    // Modern touch: a soft vertical night-sky gradient instead of flat fill.
+    v_gradient(c, 0, 0, w_, h_, Color{18, 18, 42}, Color{6, 6, 16});
     // Back-to-front so nearer (bigger) flyers overlap farther ones.
     std::sort(flyers_.begin(), flyers_.end(),
               [](const Flyer& a, const Flyer& b) { return a.scale < b.scale; });
@@ -86,27 +91,77 @@ class FlyingToasters : public Module {
     return f;
   }
 
+  // Hand-drawn pixel-art sprites, built once.
+  static const Sprite& toaster_sprite() {
+    static const Sprite s(
+        {
+            ".....CCCCCCCC.....",
+            "...CCDDDDDDDDCC...",
+            "..CDSSSSSSSSSSDC..",
+            "..CDSSSSSSSSSSDCL.",
+            ".CDDDDDDDDDDDDDDL.",
+            ".CDhhhhhhhhhhhhDL.",
+            ".CDhCCCCCCCCCChDC.",
+            ".CDhCmmmmmmmmChDC.",
+            ".CDhCmmmmmmmmChDC.",
+            ".CDhhhhhhhhhhhhDC.",
+            ".CDDDDDDDDDDDDDDC.",
+            "..CC..ffff..CC....",
+        },
+        {{'C', {225, 230, 240}},  // chrome highlight
+         {'D', {150, 160, 180}},  // chrome mid
+         {'h', {110, 120, 145}},  // chrome shadow
+         {'m', {90, 100, 125}},   // inset face
+         {'S', {35, 38, 50}},     // toast slot
+         {'L', {215, 75, 60}},    // lever knob
+         {'f', {70, 78, 100}}});  // feet
+    return s;
+  }
+  static const Sprite& toast_sprite() {
+    static const Sprite s(
+        {
+            "..bbbbbb..",
+            ".bBBBBBBb.",
+            "bBBBBWBBBb",
+            "bBBBBBBBBb",
+            "bBWBBBBBBb",
+            "bBBBBBBWBb",
+            "bBBBBBBBBb",
+            ".bBBBBBBb.",
+            "..bbbbbb..",
+        },
+        {{'b', {120, 70, 38}}, {'B', {228, 192, 120}}, {'W', {245, 220, 160}}});
+    return s;
+  }
+  static const Sprite& wing_sprite() {
+    static const Sprite s(
+        {
+            ".....ww",
+            "...wwWW",
+            ".wwWWWW",
+            "wWWWWWg",
+            ".wwWWg.",
+            "...wg..",
+        },
+        {{'W', {248, 248, 252}}, {'w', {205, 210, 225}}, {'g', {150, 158, 178}}});
+    return s;
+  }
+
   void draw_flyer(Canvas& c, const Flyer& f) const {
-    int x = static_cast<int>(f.x), y = static_cast<int>(f.y);
-    int s = f.scale;
+    int x = static_cast<int>(f.x), y = static_cast<int>(f.y), s = f.scale;
     if (f.toast) {
-      // A slice of toast: bread body + a darker crust border.
-      c.fill_rect(x, y, 18 * s, 16 * s, Color{120, 70, 40});
-      c.fill_rect(x + 2 * s, y + 2 * s, 14 * s, 12 * s, Color{225, 190, 120});
+      toast_sprite().blit(c, x, y, s);
       return;
     }
-    // Toaster body, slot, and the delivery lever.
-    c.fill_rect(x, y, 22 * s, 16 * s, Color{200, 205, 215});      // chrome body
-    c.fill_rect(x + 2 * s, y + 2 * s, 18 * s, 3 * s, Color{40, 40, 50});  // slot
-    c.fill_rect(x + 20 * s, y + 6 * s, 2 * s, 5 * s, Color{90, 90, 100});  // lever
-    c.fill_rect(x, y + 14 * s, 22 * s, 2 * s, Color{150, 155, 165});       // base trim
-
-    // Wings flap with a per-flyer phase: a sine drives the vertical span.
+    const Sprite& body = toaster_sprite();
+    const Sprite& wing = wing_sprite();
+    // Wings flap together; a sine raises/lowers them around the body.
     double flap = std::sin(time_ * 9.0 + f.phase);
-    int wing_h = static_cast<int>((4 + flap * 3) * s);
-    int wy = y + 4 * s - wing_h;
-    c.fill_rect(x - 10 * s, wy, 10 * s, wing_h, Color{245, 245, 245});       // back wing
-    c.fill_rect(x + 22 * s, wy, 10 * s, wing_h, Color{220, 220, 230});       // front wing
+    int wy = y + static_cast<int>((2 - flap * 3) * s);
+    int ww = wing.width() * s;
+    wing.blit(c, x - ww + 2 * s, wy, s, /*flip_x=*/true);            // back wing
+    body.blit(c, x, y, s);
+    wing.blit(c, x + body.width() * s - 2 * s, wy, s, /*flip_x=*/false);  // front
   }
 
   int w_ = 0, h_ = 0;

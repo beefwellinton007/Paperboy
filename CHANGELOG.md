@@ -104,6 +104,18 @@ renamed to the version, dated, tagged, and published.
   Linux/macOS so the windowed backend and `.saver` compile there.
   (Native hosts build/verify on Windows/macOS runners, not in this Linux env.)
 
+### Graphics polish (in progress)
+- **Alpha blending** in the renderer (image + SDL backends; Core Graphics already
+  honored it) — `Color.a` now composites src-over.
+- **Draw helpers** (`sdk/afterdark/draw.h`): vertical gradients, feathered
+  `fill_circle`, soft `glow`, thick `line` — the "smooth/modern" toolkit.
+- **Sprite system** (`sdk/afterdark/sprite.h`): pixel-art authored inline as
+  text grids + palette, blitted with per-pixel alpha, scale, and flip — no image
+  files/decoders needed.
+- Showcase upgrades: **Flying Toasters** now uses hand-drawn toaster/toast/wing
+  sprites on a gradient sky; **Starry Night** bright stars now twinkle with a
+  soft glow. (Rollout to the rest of the catalog continues.)
+
 ### Previews / tooling
 - **Image backend** (`make_image_backend`): rasterizes frames to RGB and writes
   PPM — dependency-free preview rendering without a display. Harness gains
