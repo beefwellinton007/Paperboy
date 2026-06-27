@@ -29,7 +29,8 @@ else()
 endif()
 
 # --- Core engine ----------------------------------------------------------
-set(CORE_SOURCES core/src/null_backend.cpp core/src/image_backend.cpp)
+set(CORE_SOURCES core/src/null_backend.cpp core/src/image_backend.cpp
+                 core/src/asset.cpp)
 if(SDL2_FOUND)
   list(APPEND CORE_SOURCES core/src/sdl_backend.cpp)
 endif()

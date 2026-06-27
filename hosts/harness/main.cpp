@@ -14,6 +14,7 @@
 #include <cstring>
 #include <string>
 
+#include "afterdark/asset.h"
 #include "afterdark/backend.h"
 #include "afterdark/host.h"
 #include "afterdark/registry.h"
@@ -66,6 +67,18 @@ Args parse(int argc, char** argv) {
 
 int main(int argc, char** argv) {
   Args args = parse(argc, argv);
+
+  // Asset-pipeline probe: --probe-sprite <path> loads an .adspr and reports it.
+  for (int i = 1; i < argc; ++i) {
+    if (std::string(argv[i]) == "--probe-sprite" && i + 1 < argc) {
+      ad::Sprite s = ad::load_adspr(argv[i + 1]);
+      if (s.empty()) { std::fprintf(stderr, "probe: load failed\n"); return 1; }
+      ad::Color p = s.at(s.width() / 2, s.height() / 2);
+      std::printf("probe ok: %dx%d  center rgba=%d,%d,%d,%d\n", s.width(),
+                  s.height(), p.r, p.g, p.b, p.a);
+      return 0;
+    }
+  }
 
   ad::Registry reg;
   ad::register_all_modules(reg);

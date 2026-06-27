@@ -117,6 +117,17 @@ renamed to the version, dated, tagged, and published.
   soft glow; **Paperboy** rider is now a pixel-art kid on a bike with spinning
   spoked wheels. (Rollout to the rest of the catalog continues.)
 
+### Asset pipeline (for AI-generated art)
+- **`.adspr` sprite format** + loader (`ad::load_adspr`, `core/asset.cpp`): raw
+  RGBA, so the runtime needs no PNG/zlib decoder (dependency-free, cross-platform).
+- **`tools/pack_assets.py`**: converts PNGs (RGB/RGBA/gray/palette, 8-bit) to
+  `.adspr` at build time (pure stdlib). `Sprite::from_rgba` builds a sprite from
+  the result.
+- Harness `--probe-sprite <path>` verifies a loaded asset. Roundtrip
+  (PNG→.adspr→Sprite) verified.
+- **`docs/ART_SPEC.md`**: exact spec (format, sizes, filenames, prompts) for
+  generating the marquee art; `assets/raw/<module>/` is the drop folder.
+
 ### Previews / tooling
 - **Image backend** (`make_image_backend`): rasterizes frames to RGB and writes
   PPM — dependency-free preview rendering without a display. Harness gains

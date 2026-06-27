@@ -36,6 +36,20 @@ class Sprite {
     }
   }
 
+  // Build from a tightly-packed RGBA buffer (w*h*4 bytes) — the form produced
+  // by the asset pipeline from PNGs.
+  static Sprite from_rgba(int w, int h, const unsigned char* rgba) {
+    Sprite s;
+    s.w_ = w;
+    s.h_ = h;
+    s.px_.resize(static_cast<size_t>(w) * h);
+    for (int i = 0; i < w * h; ++i)
+      s.px_[i] = Color{rgba[i * 4], rgba[i * 4 + 1], rgba[i * 4 + 2],
+                       rgba[i * 4 + 3]};
+    return s;
+  }
+
+  bool empty() const { return px_.empty(); }
   int width() const { return w_; }
   int height() const { return h_; }
   const Color& at(int x, int y) const { return px_[y * w_ + x]; }
