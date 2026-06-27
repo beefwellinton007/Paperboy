@@ -52,6 +52,15 @@ class Paperboy : public Module {
     return {"paperboy", "Paperboy", "1.0.0", Category::Interactive};
   }
 
+  std::vector<SettingDesc> settings_schema() const override {
+    return {
+        {"scroll_speed", "Ride speed", SettingType::Enum, "normal", 0, 0,
+         {"slow", "normal", "fast"}},
+        {"day_length", "Day cycle (seconds)", SettingType::Int, "40", 10, 300, {}},
+        {"show_score", "Show delivery score", SettingType::Bool, "true", 0, 0, {}},
+    };
+  }
+
   void init(Context& ctx) override {
     w_ = ctx.screen_w;
     h_ = ctx.screen_h;

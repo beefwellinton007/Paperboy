@@ -23,7 +23,11 @@ class HostSession {
     ctx_.screen_w = width;
     ctx_.screen_h = height;
     ctx_.interactive = interactive;
+    // Provided settings win; schema defaults fill any gaps.
     ctx_.settings = settings;
+    for (const auto& d : mod_.settings_schema())
+      if (!d.default_value.empty() && !ctx_.settings.has(d.key))
+        ctx_.settings.set(d.key, d.default_value);
     mod_.init(ctx_);
   }
 

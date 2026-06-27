@@ -28,6 +28,7 @@ struct Args {
   bool headless = false;
   bool play = false;
   bool list = false;
+  bool config = false;
   int frames = 120;
   ad::Settings settings;
 };
@@ -44,6 +45,7 @@ Args parse(int argc, char** argv) {
     else if (s == "--headless") a.headless = true;
     else if (s == "--play") a.play = true;
     else if (s == "--list" || s == "-l") a.list = true;
+    else if (s == "--config") a.config = true;
     else if (s == "--set") {  // --set key=value (repeatable)
       std::string kv = next();
       auto eq = kv.find('=');
@@ -73,6 +75,28 @@ int main(int argc, char** argv) {
     std::fprintf(stderr, "error: unknown module '%s' (try --list)\n",
                  args.module.c_str());
     return 2;
+  }
+
+  if (args.config) {  // dump the module's declared config schema
+    static const char* kType[] = {"bool", "int", "float", "enum", "color", "string"};
+    auto schema = mod->settings_schema();
+    std::printf("Config schema for '%s' (%zu settings):\n", args.module.c_str(),
+                schema.size());
+    for (const auto& d : schema) {
+      std::printf("  %-14s %-7s default=%-8s", d.key.c_str(),
+                  kType[static_cast<int>(d.type)], d.default_value.c_str());
+      if (d.type == ad::SettingType::Enum) {
+        std::printf(" options=[");
+        for (size_t i = 0; i < d.options.size(); ++i)
+          std::printf("%s%s", i ? "," : "", d.options[i].c_str());
+        std::printf("]");
+      } else if (d.type == ad::SettingType::Int ||
+                 d.type == ad::SettingType::Float) {
+        std::printf(" range=[%g,%g]", d.min, d.max);
+      }
+      std::printf("  (%s)\n", d.label.c_str());
+    }
+    return 0;
   }
 
   auto backend = ad::make_default_backend(args.headless);

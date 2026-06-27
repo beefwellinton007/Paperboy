@@ -100,6 +100,12 @@ renamed to the version, dated, tagged, and published.
   settings — the first end-to-end manifest→config→behavior path.
 - Native hosts have a `load_settings()` hook wired in; reading persisted user
   choices (Windows registry / macOS ScreenSaverDefaults) is the remaining TODO.
+- **Config schema in code** (`SettingDesc` + `Module::settings_schema()`): modules
+  declare their settings (type, default, range, enum options) in C++ — one
+  runtime source of truth for both default-seeding and the config UI. HostSession
+  seeds schema defaults (provided settings still win); harness `--config <module>`
+  dumps the schema. Paperboy declares its schema; other modules follow as their
+  settings are wired.
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.

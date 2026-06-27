@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
+#include <vector>
 
 namespace ad {
 
@@ -129,6 +130,23 @@ enum class Category {
   Interactive,  // playable / game-style module (e.g. Paperboy)
 };
 
+// ---------------------------------------------------------------------------
+// Config schema. A module declares its settings in code via settings_schema();
+// hosts use these descriptors to (a) seed default values and (b) render the
+// per-platform config UI. Mirrors the "settings" array in module.json — code is
+// the source of truth at runtime, the JSON documents/packages it.
+// ---------------------------------------------------------------------------
+enum class SettingType { Bool, Int, Float, Enum, Color, String };
+
+struct SettingDesc {
+  std::string key;
+  std::string label;
+  SettingType type = SettingType::Bool;
+  std::string default_value;        // stored as text, parsed via Settings
+  double min = 0, max = 0;          // for Int/Float
+  std::vector<std::string> options; // for Enum
+};
+
 struct ModuleInfo {
   std::string id;       // stable slug, matches module.json "id"
   std::string name;     // display name
@@ -145,6 +163,9 @@ class Module {
  public:
   virtual ~Module() = default;
   virtual ModuleInfo info() const = 0;
+  // Declarative config (default: none). Hosts read this to seed defaults and
+  // build the settings UI.
+  virtual std::vector<SettingDesc> settings_schema() const { return {}; }
   virtual void init(Context&) {}
   virtual void tick(Context&, double /*dt*/) {}
   virtual void draw(Canvas&) {}
