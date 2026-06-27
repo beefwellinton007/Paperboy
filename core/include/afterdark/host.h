@@ -37,9 +37,18 @@ class HostSession {
 
   // Advance simulation by dt and render one frame to the backend.
   void step(Backend& backend, double dt) {
+    Canvas& c = backend.begin_frame();
+    // If the real drawable size differs from what the module was initialized
+    // with (high-DPI/Retina backing, or a window resize), reflow the module to
+    // the true pixel size. Without this a module paints only part of the target
+    // and the rest shows uninitialized memory.
+    if (c.width() != ctx_.screen_w || c.height() != ctx_.screen_h) {
+      ctx_.screen_w = c.width();
+      ctx_.screen_h = c.height();
+      mod_.init(ctx_);
+    }
     ctx_.time += dt;
     mod_.tick(ctx_, dt);
-    Canvas& c = backend.begin_frame();
     mod_.draw(c);
     backend.end_frame();
   }

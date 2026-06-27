@@ -29,6 +29,7 @@ struct Args {
   bool play = false;
   bool list = false;
   bool config = false;
+  bool fullscreen = false;
   int frames = 120;
   std::string render;  // PPM output prefix; empty = no rendering
   int stride = 10;     // save every Nth frame when rendering
@@ -48,6 +49,7 @@ Args parse(int argc, char** argv) {
     else if (s == "--play") a.play = true;
     else if (s == "--list" || s == "-l") a.list = true;
     else if (s == "--config") a.config = true;
+    else if (s == "--fullscreen" || s == "-f") a.fullscreen = true;
     else if (s == "--render") a.render = next();
     else if (s == "--stride") a.stride = std::atoi(next());
     else if (s == "--set") {  // --set key=value (repeatable)
@@ -103,9 +105,15 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  auto backend = args.render.empty()
-                     ? ad::make_default_backend(args.headless)
-                     : ad::make_image_backend(args.render, args.stride);
+  std::unique_ptr<ad::Backend> backend;
+  if (!args.render.empty())
+    backend = ad::make_image_backend(args.render, args.stride);
+#ifdef AD_HAVE_SDL2
+  else if (args.fullscreen && !args.headless)
+    backend = ad::make_sdl_backend_fullscreen();
+#endif
+  else
+    backend = ad::make_default_backend(args.headless);
   const bool finite = args.headless || !args.render.empty();
   if (!backend->init(args.width, args.height, "AfterDark — " + args.module)) {
     std::fprintf(stderr, "error: backend init failed\n");

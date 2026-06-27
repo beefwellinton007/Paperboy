@@ -72,8 +72,11 @@ class FlyingToasters : public Module {
  private:
   Flyer spawn(Context& ctx) {
     Flyer f;
-    f.scale = ctx.rng.range(1, 3);
-    f.speed = 60 + f.scale * 25 + ctx.rng.next_double() * 30;
+    // Scale toasters to the screen so they aren't tiny on big/Retina displays.
+    int unit = std::max(1, h_ / 300);
+    f.scale = ctx.rng.range(1, 3) * unit;
+    f.speed = (60 + ctx.rng.range(1, 3) * 25 + ctx.rng.next_double() * 30) *
+              std::max(1.0, h_ / 600.0);
     f.phase = ctx.rng.next_double() * 6.28;
     f.toast = ctx.rng.range(0, 4) == 0;  // ~1 in 5 is toast
     f.x = w_;
