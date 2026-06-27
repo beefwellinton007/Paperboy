@@ -79,7 +79,7 @@ class Clocks : public Module {
       draw_line(c, cx, cy, cx + static_cast<int>(std::cos(a) * len),
                 cy + static_cast<int>(std::sin(a) * len), thick, col);
     };
-    hand(hour / 12.0, rad * 0.5, 4, Color{230, 230, 240});           // hour
+    hand(hour / 12.0, static_cast<int>(rad * 0.5), 4, Color{230, 230, 240});   // hour
     hand(minute / 60.0, static_cast<int>(rad * 0.8), 3, Color{200, 210, 230});  // minute
     hand(second / 60.0, static_cast<int>(rad * 0.9), 1, Color{230, 90, 90});    // second
   }

@@ -41,7 +41,8 @@ jobs:
         run: |
           BIN=build/ad-harness
           [ -f build/Release/ad-harness.exe ] && BIN=build/Release/ad-harness.exe
-          for m in $("$BIN" --list | tail -n +2); do
+          # tr -d '\r': Windows emits CRLF, which would corrupt the module names.
+          for m in $("$BIN" --list | tail -n +2 | tr -d '\r'); do
             echo "--- smoke: $m"
             "$BIN" --module "$m" --headless --frames 180
           done
