@@ -59,6 +59,8 @@ add_library(ad_modules STATIC
   modules/clocks/clocks.cpp
   modules/confetti/confetti.cpp
   modules/gravity/gravity.cpp
+  modules/hard_rain/hard_rain.cpp
+  modules/satori/satori.cpp
   modules/_template/template.cpp
 )
 target_include_directories(ad_modules PUBLIC ${CMAKE_SOURCE_DIR}/modules)

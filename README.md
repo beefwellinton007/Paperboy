@@ -34,6 +34,8 @@ modules/
   clocks/           recreation (grid of analog clocks)
   confetti/         recreation (confetti bursts)
   gravity/          recreation (bouncing balls)
+  hard_rain/        recreation (rain + lightning)
+  satori/           recreation (kaleidoscopic art)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester

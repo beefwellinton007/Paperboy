@@ -1,0 +1,25 @@
+{
+  "id": "satori",
+  "name": "Satori",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Evolving kaleidoscopic rose-curve art with cycling color. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "symmetry",
+      "label": "Symmetry",
+      "type": "int",
+      "min": 2,
+      "max": 12,
+      "default": 6
+    },
+    {
+      "key": "fade",
+      "label": "Trails fade",
+      "type": "bool",
+      "default": true
+    }
+  ]
+}

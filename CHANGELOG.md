@@ -77,6 +77,10 @@ renamed to the version, dated, tagged, and published.
   and fall under gravity (density setting via the config schema).
 - **Gravity** module — recreation: trailed balls bounce with restitution and
   re-kick so motion never settles (ball-count setting via the config schema).
+- **Hard Rain** module — recreation: diagonal rain with splashes and occasional
+  lightning flashes (intensity + lightning settings via the config schema).
+- **Satori** module — recreation: evolving kaleidoscopic rose-curve art with
+  cycling color (symmetry + fade settings via the config schema).
 
 ### Platform hosts (in progress)
 - **Shared HostSession** (`core/include/afterdark/host.h`): step-based per-frame

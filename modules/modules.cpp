@@ -6,12 +6,14 @@
 #include "confetti/confetti.h"
 #include "fish/fish.h"
 #include "gravity/gravity.h"
+#include "hard_rain/hard_rain.h"
 #include "flying_toasters/flying_toasters.h"
 #include "globe/globe.h"
 #include "messages/messages.h"
 #include "mowing_man/mowing_man.h"
 #include "paperboy/paperboy.h"
 #include "rat_race/rat_race.h"
+#include "satori/satori.h"
 #include "spotlight/spotlight.h"
 #include "starry_night/starry_night.h"
 #include "warp/warp.h"
@@ -35,12 +37,14 @@ void register_all_modules(Registry& reg) {
   reg.add("clocks", &make_clocks);
   reg.add("confetti", &make_confetti);
   reg.add("gravity", &make_gravity);
+  reg.add("hard-rain", &make_hard_rain);
+  reg.add("satori", &make_satori);
   // The copy-me template (also a working ambient starfield).
   reg.add("starfield", &make_template_starfield);
 
   // More classic recreations land here as they're built:
-  //   reg.add("hard-rain", &make_hard_rain);
-  //   reg.add("satori",    &make_satori);
+  //   reg.add("bad-dog",     &make_bad_dog);
+  //   reg.add("down-drain",  &make_down_the_drain);
   //   ...
 }
 
