@@ -29,6 +29,12 @@ class Backend {
 // smoke-test every module ("did it clear + draw without crashing?").
 std::unique_ptr<Backend> make_null_backend();
 
+// Image backend: rasterizes frames into an RGB buffer and writes PPM files
+// (prefix_0000.ppm, ...) every `stride` frames. No dependencies — used to
+// generate visual previews of modules without a display.
+std::unique_ptr<Backend> make_image_backend(const std::string& prefix,
+                                            int stride);
+
 #ifdef AD_HAVE_SDL2
 std::unique_ptr<Backend> make_sdl_backend();             // resizable window
 std::unique_ptr<Backend> make_sdl_backend_fullscreen();  // borderless fullscreen

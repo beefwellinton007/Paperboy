@@ -30,6 +30,8 @@ struct Args {
   bool list = false;
   bool config = false;
   int frames = 120;
+  std::string render;  // PPM output prefix; empty = no rendering
+  int stride = 10;     // save every Nth frame when rendering
   ad::Settings settings;
 };
 
@@ -46,6 +48,8 @@ Args parse(int argc, char** argv) {
     else if (s == "--play") a.play = true;
     else if (s == "--list" || s == "-l") a.list = true;
     else if (s == "--config") a.config = true;
+    else if (s == "--render") a.render = next();
+    else if (s == "--stride") a.stride = std::atoi(next());
     else if (s == "--set") {  // --set key=value (repeatable)
       std::string kv = next();
       auto eq = kv.find('=');
@@ -99,7 +103,10 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  auto backend = ad::make_default_backend(args.headless);
+  auto backend = args.render.empty()
+                     ? ad::make_default_backend(args.headless)
+                     : ad::make_image_backend(args.render, args.stride);
+  const bool finite = args.headless || !args.render.empty();
   if (!backend->init(args.width, args.height, "AfterDark — " + args.module)) {
     std::fprintf(stderr, "error: backend init failed\n");
     return 3;
@@ -129,9 +136,13 @@ int main(int argc, char** argv) {
     }
     session.step(*backend, dt);
 
-    if (args.headless && ++frame >= args.frames) break;
+    if (finite && ++frame >= args.frames) break;
     if (backend->should_close()) break;
   }
+
+  if (!args.render.empty())
+    std::printf("Rendered '%s': %d frames -> %s_*.ppm (stride %d)\n",
+                args.module.c_str(), frame, args.render.c_str(), args.stride);
 
   long rects = ad::null_backend_rect_count(*backend);
   if (args.headless) {

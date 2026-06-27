@@ -104,6 +104,15 @@ renamed to the version, dated, tagged, and published.
   Linux/macOS so the windowed backend and `.saver` compile there.
   (Native hosts build/verify on Windows/macOS runners, not in this Linux env.)
 
+### Previews / tooling
+- **Image backend** (`make_image_backend`): rasterizes frames to RGB and writes
+  PPM — dependency-free preview rendering without a display. Harness gains
+  `--render <prefix>` / `--stride`.
+- **Gallery generator** (`tools/make_gallery.py`, `tools/preview.sh`): renders
+  every module and builds a captioned `montage.png` + an animated HTML flipbook
+  (pure stdlib — PPM→PNG via zlib). Headline image committed at
+  `docs/preview/montage.png`.
+
 ### Configuration
 - **Settings store** (`ad::Settings` in `sdk/afterdark.h`, on `Context`): typed
   key/value config (bool/int/float/enum/string) read by modules with fallback
