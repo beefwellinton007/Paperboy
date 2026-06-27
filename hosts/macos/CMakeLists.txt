@@ -10,6 +10,7 @@ set_target_properties(AfterDarkSaver PROPERTIES
   BUNDLE_EXTENSION "saver"
   OUTPUT_NAME "AfterDark"
   MACOSX_BUNDLE_GUI_IDENTIFIER "com.afterdark.recreation"
+  MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist"
   XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC YES
 )
 target_link_libraries(AfterDarkSaver PRIVATE ad_core ad_modules
