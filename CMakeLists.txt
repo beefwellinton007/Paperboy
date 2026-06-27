@@ -52,6 +52,9 @@ add_library(ad_modules STATIC
   modules/mowing_man/mowing_man.cpp
   modules/warp/warp.cpp
   modules/spotlight/spotlight.cpp
+  modules/globe/globe.cpp
+  modules/boris/boris.cpp
+  modules/rat_race/rat_race.cpp
   modules/_template/template.cpp
 )
 target_include_directories(ad_modules PUBLIC ${CMAKE_SOURCE_DIR}/modules)

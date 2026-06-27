@@ -62,6 +62,12 @@ renamed to the version, dated, tagged, and published.
 - **Spotlight** module — recreation: a roving spotlight on a Lissajous path
   reveals a hidden scene (a tiled floor + an "AFTER DARK" sign) only where the
   beam falls, via a per-scanline shadow mask.
+- **Globe** module — recreation: a rotating wireframe Earth with continents,
+  drawn via 3D rotation + orthographic projection (first 3D-math module).
+- **Boris the Cat** module — recreation: a cat strolls, sits to wash, and naps,
+  driven by a small Walk/Sit/Sleep state machine.
+- **Rat Race** module — recreation: mice scurry laps around an oval track with
+  random speed bursts; the leader wears a crown.
 
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.

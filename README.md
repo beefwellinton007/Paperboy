@@ -27,6 +27,9 @@ modules/
   mowing_man/       flagship recreation (mows the lawn)
   warp/             recreation (hyperspace starfield)
   spotlight/        recreation (roving beam reveal)
+  globe/            recreation (rotating wireframe Earth)
+  boris/            recreation (a wandering cat)
+  rat_race/         recreation (mice racing a track)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester
