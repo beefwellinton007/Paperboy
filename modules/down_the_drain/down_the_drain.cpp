@@ -10,6 +10,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -49,16 +51,21 @@ class DownTheDrain : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{6, 8, 14});
+    v_gradient(c, 0, 0, w_, h_, Color{10, 12, 22}, Color{3, 4, 9});
     int cx = w_ / 2, cy = h_ / 2;
-    // The drain.
-    c.fill_rect(cx - 6, cy - 6, 12, 12, Color{0, 0, 0});
     for (const auto& p : parts_) {
       int x = cx + static_cast<int>(std::cos(p.angle) * p.radius);
       int y = cy + static_cast<int>(std::sin(p.angle) * p.radius * 0.7);  // ellipse
-      int sz = 1 + static_cast<int>((max_r_ - p.radius) / max_r_ * 3);
-      c.fill_rect(x, y, sz, sz, p.color);
+      double closeness = (max_r_ - p.radius) / max_r_;       // 0 far .. 1 near
+      int sz = 2 + static_cast<int>(closeness * 4);
+      Color g = p.color;
+      g.a = static_cast<uint8_t>(60 + closeness * 80);
+      glow(c, x, y, sz + 2, g, 3);
+      c.fill_rect(x - sz / 2, y - sz / 2, sz, sz, p.color);
     }
+    // The dark drain with a faint rim.
+    fill_circle(c, cx, cy, 10, Color{0, 0, 0});
+    fill_circle(c, cx, cy, 12, Color{30, 30, 45, 80});
   }
 
  private:

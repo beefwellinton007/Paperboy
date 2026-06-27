@@ -115,7 +115,10 @@ renamed to the version, dated, tagged, and published.
 - Showcase upgrades: **Flying Toasters** now uses hand-drawn toaster/toast/wing
   sprites on a gradient sky; **Starry Night** bright stars now twinkle with a
   soft glow; **Paperboy** rider is now a pixel-art kid on a bike with spinning
-  spoked wheels. (Rollout to the rest of the catalog continues.)
+  spoked wheels.
+- Smooth/glow pass on ambient modules: **Gravity** (glowing balls + highlight +
+  soft trails on a gradient), **Down the Drain** (glowing particles + gradient +
+  rimmed drain), **Warp** (fading streaks + glowing heads). Rollout continues.
 
 ### Efficient image blitting
 - **`Canvas::draw_rgba`** — scaled image blit with flip + alpha. SDL backend

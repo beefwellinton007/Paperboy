@@ -9,6 +9,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -71,32 +73,28 @@ class Gravity : public Module {
   }
 
   void draw(Canvas& c) override {
-    c.clear(Color{12, 14, 20});
+    v_gradient(c, 0, 0, w_, h_, Color{16, 18, 28}, Color{6, 7, 12});
     for (const auto& b : balls_) {
-      // Trail opposite the velocity.
-      for (int k = 1; k <= 4; ++k) {
-        int tx = static_cast<int>(b.x - b.vx * 0.01 * k);
-        int ty = static_cast<int>(b.y - b.vy * 0.01 * k);
-        int r = b.radius - k * 2;
-        if (r <= 0) continue;
-        Color t{static_cast<uint8_t>(b.color.r / (k + 1)),
-                static_cast<uint8_t>(b.color.g / (k + 1)),
-                static_cast<uint8_t>(b.color.b / (k + 1))};
-        c.fill_rect(tx - r, ty - r, r * 2, r * 2, t);
+      int cx = static_cast<int>(b.x), cy = static_cast<int>(b.y);
+      // Soft trail of fading circles opposite the velocity.
+      for (int k = 4; k >= 1; --k) {
+        int tx = static_cast<int>(b.x - b.vx * 0.012 * k);
+        int ty = static_cast<int>(b.y - b.vy * 0.012 * k);
+        Color t = b.color;
+        t.a = static_cast<uint8_t>(40 / k);
+        fill_circle(c, tx, ty, b.radius - k, t);
       }
-      draw_ball(c, b);
+      // Glow halo + crisp ball with a highlight.
+      Color halo = b.color;
+      halo.a = 70;
+      glow(c, cx, cy, b.radius * 2, halo, 4);
+      fill_circle(c, cx, cy, b.radius, b.color);
+      Color hi{255, 255, 255, 150};
+      fill_circle(c, cx - b.radius / 3, cy - b.radius / 3, b.radius / 3, hi);
     }
   }
 
  private:
-  // A filled circle approximated by horizontal spans (uses only fill_rect).
-  void draw_ball(Canvas& c, const Ball& b) {
-    int cx = static_cast<int>(b.x), cy = static_cast<int>(b.y), r = b.radius;
-    for (int dy = -r; dy <= r; ++dy) {
-      int half = static_cast<int>(std::sqrt(static_cast<double>(r * r - dy * dy)));
-      c.fill_rect(cx - half, cy + dy, half * 2, 1, b.color);
-    }
-  }
 
   int w_ = 0, h_ = 0;
   std::vector<Ball> balls_;

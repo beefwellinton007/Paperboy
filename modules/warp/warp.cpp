@@ -10,6 +10,8 @@
 #include <cmath>
 #include <vector>
 
+#include "afterdark/draw.h"
+
 namespace ad {
 namespace {
 
@@ -77,7 +79,16 @@ class Warp : public Module {
       int px = static_cast<int>(x0 + (x1 - x0) * t);
       int py = static_cast<int>(y0 + (y1 - y0) * t);
       if (px < 0 || px >= w_ || py < 0 || py >= h_) continue;
-      c.fill_rect(px, py, closeness, closeness, col);
+      // Fade the streak from tail (faint) to head (bright).
+      Color seg = col;
+      seg.a = static_cast<uint8_t>(60 + t * 195);
+      c.fill_rect(px, py, closeness, closeness, seg);
+    }
+    // Bright glowing head for near stars.
+    if (z < 0.5 && x1 >= 0 && x1 < w_ && y1 >= 0 && y1 < h_) {
+      Color h = col;
+      h.a = 120;
+      glow(c, static_cast<int>(x1), static_cast<int>(y1), closeness + 2, h, 3);
     }
   }
 
