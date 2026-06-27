@@ -1,0 +1,19 @@
+{
+  "id": "gravity",
+  "name": "Gravity",
+  "version": "1.0.0",
+  "category": "ambient",
+  "author": "After Dark Recreation Project",
+  "description": "Balls bounce around under gravity with trails, re-kicked so the motion never settles. Original-art recreation.",
+  "assets": [],
+  "settings": [
+    {
+      "key": "ball_count",
+      "label": "Number of balls",
+      "type": "int",
+      "min": 1,
+      "max": 60,
+      "default": 14
+    }
+  ]
+}

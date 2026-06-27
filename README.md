@@ -32,6 +32,8 @@ modules/
   rat_race/         recreation (mice racing a track)
   messages/         recreation (bouncing text)
   clocks/           recreation (grid of analog clocks)
+  confetti/         recreation (confetti bursts)
+  gravity/          recreation (bouncing balls)
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester

@@ -73,6 +73,10 @@ renamed to the version, dated, tagged, and published.
   arrives once the config UI is wired).
 - **Clocks** module — recreation: a grid of analog clocks ticking from
   different start times; adds a small reusable line-draw helper.
+- **Confetti Factory** module — recreation: bursts of confetti arc up, flutter,
+  and fall under gravity (density setting via the config schema).
+- **Gravity** module — recreation: trailed balls bounce with restitution and
+  re-kick so motion never settles (ball-count setting via the config schema).
 
 ### Platform hosts (in progress)
 - **Shared HostSession** (`core/include/afterdark/host.h`): step-based per-frame
