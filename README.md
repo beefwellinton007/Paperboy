@@ -35,8 +35,8 @@ modules/
   _template/        copy-me template (also a working starfield)
 hosts/
   harness/   standalone dev runner + headless CI smoke tester
-  windows/   .scr host shim (stub; builds on a Windows runner)
-  macos/     .saver host shim (stub; builds on a macOS runner)
+  windows/   .scr host (SDL-based; builds on a Windows runner)
+  macos/     .saver host (Core Graphics; builds on a macOS runner)
 ```
 
 ## Build & run

@@ -15,6 +15,7 @@
 #include <string>
 
 #include "afterdark/backend.h"
+#include "afterdark/host.h"
 #include "afterdark/registry.h"
 #include "modules.h"
 
@@ -73,11 +74,7 @@ int main(int argc, char** argv) {
     return 3;
   }
 
-  ad::Context ctx;
-  ctx.screen_w = args.width;
-  ctx.screen_h = args.height;
-  ctx.interactive = args.play;
-  mod->init(ctx);
+  ad::HostSession session(*mod, args.width, args.height, args.play);
 
   auto info = mod->info();
   std::printf("Running '%s' v%s (%s)%s\n", info.name.c_str(),
@@ -96,13 +93,9 @@ int main(int argc, char** argv) {
         running = false;
         break;
       }
-      mod->on_event(ctx, e);
+      session.handle(e);
     }
-    ctx.time += dt;
-    mod->tick(ctx, dt);
-    ad::Canvas& canvas = backend->begin_frame();
-    mod->draw(canvas);
-    backend->end_frame();
+    session.step(*backend, dt);
 
     if (args.headless && ++frame >= args.frames) break;
     if (backend->should_close()) break;

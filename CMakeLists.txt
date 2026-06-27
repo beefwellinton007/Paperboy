@@ -66,6 +66,11 @@ target_link_libraries(ad_modules PUBLIC ad_core)
 add_executable(ad-harness hosts/harness/main.cpp)
 target_link_libraries(ad-harness PRIVATE ad_core ad_modules)
 
-# Native hosts (.scr / .saver) are built per-platform; see hosts/windows and
-# hosts/macos. They are intentionally not part of this default build because
-# they require platform SDKs.
+# --- Native hosts (.scr / .saver) -----------------------------------------
+# Built only on their own platform; each subdir early-returns elsewhere, so the
+# Linux/CI default build is unaffected.
+if(WIN32)
+  add_subdirectory(hosts/windows)
+elseif(APPLE)
+  add_subdirectory(hosts/macos)
+endif()

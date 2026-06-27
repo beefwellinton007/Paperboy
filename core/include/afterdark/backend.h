@@ -30,7 +30,10 @@ class Backend {
 std::unique_ptr<Backend> make_null_backend();
 
 #ifdef AD_HAVE_SDL2
-std::unique_ptr<Backend> make_sdl_backend();
+std::unique_ptr<Backend> make_sdl_backend();             // resizable window
+std::unique_ptr<Backend> make_sdl_backend_fullscreen();  // borderless fullscreen
+// Wrap an existing native window (e.g. a Windows screensaver preview HWND).
+std::unique_ptr<Backend> make_sdl_backend_embedded(void* native_window);
 #endif
 
 // Picks SDL2 when compiled in and not forced headless; otherwise the null

@@ -74,6 +74,22 @@ renamed to the version, dated, tagged, and published.
 - **Clocks** module — recreation: a grid of analog clocks ticking from
   different start times; adds a small reusable line-draw helper.
 
+### Platform hosts (in progress)
+- **Shared HostSession** (`core/include/afterdark/host.h`): step-based per-frame
+  driver (handle events, tick + draw one frame) so the harness and native hosts
+  share one tested code path. Harness refactored onto it.
+- **SDL backend modes**: added fullscreen and embedded (wrap an existing native
+  window) variants alongside the windowed one, for the screensaver hosts.
+- **Windows `.scr` host** implemented: parses `/s` `/p <HWND>` `/c`, runs
+  fullscreen or in the preview pane via the embedded SDL backend, dismisses on
+  input. (Settings dialog + config persistence still TODO.)
+- **macOS `.saver` host** implemented: `ScreenSaverView` subclass with a Core
+  Graphics-backed Canvas driven by HostSession. (Configure sheet + persistence
+  still TODO.)
+- CMake builds each native host only on its platform; CI installs SDL2 on
+  Linux/macOS so the windowed backend and `.saver` compile there.
+  (Native hosts build/verify on Windows/macOS runners, not in this Linux env.)
+
 ### Planned for 2.0 (first release)
 - Shared **AfterDark Core** engine + Render/Platform Abstraction Layer.
 - **Module SDK** and `module.json` manifest format (room to add more modules).

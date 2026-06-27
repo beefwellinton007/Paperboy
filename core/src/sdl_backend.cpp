@@ -43,13 +43,24 @@ class SdlCanvas : public Canvas {
   int w_, h_;
 };
 
+enum class Mode { Windowed, Fullscreen, Embedded };
+
 class SdlBackend : public Backend {
  public:
+  explicit SdlBackend(Mode mode = Mode::Windowed, void* embed = nullptr)
+      : mode_(mode), embed_(embed) {}
+
   bool init(int w, int h, const std::string& title) override {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) return false;
-    win_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED,
-                            SDL_WINDOWPOS_CENTERED, w, h,
-                            SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    if (mode_ == Mode::Embedded && embed_) {
+      win_ = SDL_CreateWindowFrom(embed_);  // render into a host-owned window
+    } else {
+      Uint32 flags = SDL_WINDOW_ALLOW_HIGHDPI;
+      flags |= (mode_ == Mode::Fullscreen) ? SDL_WINDOW_FULLSCREEN_DESKTOP
+                                           : SDL_WINDOW_RESIZABLE;
+      win_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED, w, h, flags);
+    }
     if (!win_) return false;
     ren_ = SDL_CreateRenderer(win_, -1, SDL_RENDERER_ACCELERATED |
                                             SDL_RENDERER_PRESENTVSYNC);
@@ -105,6 +116,8 @@ class SdlBackend : public Backend {
   }
 
  private:
+  Mode mode_;
+  void* embed_;
   SDL_Window* win_ = nullptr;
   SDL_Renderer* ren_ = nullptr;
   std::unique_ptr<SdlCanvas> canvas_;
@@ -113,7 +126,15 @@ class SdlBackend : public Backend {
 }  // namespace
 
 std::unique_ptr<Backend> make_sdl_backend() {
-  return std::make_unique<SdlBackend>();
+  return std::make_unique<SdlBackend>(Mode::Windowed);
+}
+
+std::unique_ptr<Backend> make_sdl_backend_fullscreen() {
+  return std::make_unique<SdlBackend>(Mode::Fullscreen);
+}
+
+std::unique_ptr<Backend> make_sdl_backend_embedded(void* native_window) {
+  return std::make_unique<SdlBackend>(Mode::Embedded, native_window);
 }
 
 }  // namespace ad
